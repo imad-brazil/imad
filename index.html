@@ -617,13 +617,16 @@
           <div class="credits">{{ t.credits1 }} <b>Vito Comar</b>. {{ t.credits2 }}</div>
         </div>
         <form class="form rv" data-d="1" onSubmit="{{ onSubmit }}">
+          <input type="hidden" name="access_key" value="7759120e-8282-4078-88b9-7a624aa8511c">
+          <input type="hidden" name="subject" value="Novo contato pelo site IMAD">
+          <input type="checkbox" name="botcheck" style="display:none" tabIndex="-1" autoComplete="off">
           <div class="frow">
-            <div class="field"><label>{{ t.fName }}</label><input type="text" placeholder="{{ t.fNameP }}" required></div>
-            <div class="field"><label>{{ t.fEmail }}</label><input type="email" placeholder="{{ t.fEmailP }}" required></div>
+            <div class="field"><label>{{ t.fName }}</label><input type="text" name="name" placeholder="{{ t.fNameP }}" required></div>
+            <div class="field"><label>{{ t.fEmail }}</label><input type="email" name="email" placeholder="{{ t.fEmailP }}" required></div>
           </div>
-          <div class="field"><label>{{ t.fSubject }}</label><input type="text" placeholder="{{ t.fSubjectP }}"></div>
-          <div class="field"><label>{{ t.fMsg }}</label><textarea rows="5" placeholder="{{ t.fMsgP }}" required></textarea></div>
-          <button type="submit" class="btn btn-green">{{ sendLabel }}
+          <div class="field"><label>{{ t.fSubject }}</label><input type="text" name="topic" placeholder="{{ t.fSubjectP }}"></div>
+          <div class="field"><label>{{ t.fMsg }}</label><textarea rows="5" name="message" placeholder="{{ t.fMsgP }}" required></textarea></div>
+          <button type="submit" class="btn btn-green" disabled="{{ sending }}">{{ sendLabel }}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
         </form>
@@ -736,7 +739,7 @@ const TR = {
     conKicker:"Contato & Créditos", conTitle:"Vamos plantar algo juntos?", conLead:"Tem uma ideia, uma parceria ou quer apoiar? Escreva para nós — respondemos com carinho.",
     conAddrL:"Endereço", conEmailL:"E-mail", conPhoneL:"Telefone · WhatsApp", conSocialL:"Redes sociais",
     credits1:"Idealização e coordenação:", credits2:"Site desenvolvido com dedicação à causa socioambiental do IMAD.",
-    fName:"Nome", fNameP:"Seu nome", fEmail:"E-mail", fEmailP:"voce@email.com", fSubject:"Assunto", fSubjectP:"Como podemos ajudar?", fMsg:"Mensagem", fMsgP:"Escreva sua mensagem...", fSend:"Enviar mensagem", fSent:"Mensagem enviada ✓",
+    fName:"Nome", fNameP:"Seu nome", fEmail:"E-mail", fEmailP:"voce@email.com", fSubject:"Assunto", fSubjectP:"Como podemos ajudar?", fMsg:"Mensagem", fMsgP:"Escreva sua mensagem...", fSend:"Enviar mensagem", fSending:"Enviando...", fSent:"Mensagem enviada ✓", fError:"Falha ao enviar. Tente novamente.",
     footCtaTitle:"Vamos cultivar o futuro, juntos.",
     footStatement:"O IMAD é uma ONG e organização sem fins lucrativos registrada no Brasil, qualificada como OSCIP, com sede em Dourados, Mato Grosso do Sul.",
     footNav:"Navegue", footGet:"Participe", footRights:"Todos os direitos reservados.", footMade:"Feito com cuidado pela vida.",
@@ -797,7 +800,7 @@ const TR = {
     conKicker:"Contact & Credits", conTitle:"Shall we plant something together?", conLead:"Have an idea, a partnership, or want to support us? Write to us — we reply with care.",
     conAddrL:"Address", conEmailL:"Email", conPhoneL:"Phone · WhatsApp", conSocialL:"Social media",
     credits1:"Conceived and coordinated by:", credits2:"Site built in dedication to IMAD's social-environmental cause.",
-    fName:"Name", fNameP:"Your name", fEmail:"Email", fEmailP:"you@email.com", fSubject:"Subject", fSubjectP:"How can we help?", fMsg:"Message", fMsgP:"Write your message...", fSend:"Send message", fSent:"Message sent ✓",
+    fName:"Name", fNameP:"Your name", fEmail:"Email", fEmailP:"you@email.com", fSubject:"Subject", fSubjectP:"How can we help?", fMsg:"Message", fMsgP:"Write your message...", fSend:"Send message", fSending:"Sending...", fSent:"Message sent ✓", fError:"Failed to send. Please try again.",
     footCtaTitle:"Let's grow the future, together.",
     footStatement:"IMAD is a registered NGO and non-profit organisation in Brazil, qualified as an OSCIP, based in Dourados, Mato Grosso do Sul.",
     footNav:"Explore", footGet:"Get involved", footRights:"All rights reserved.", footMade:"Made with care for life.",
@@ -893,8 +896,22 @@ class Component extends DCLogic {
       sheetClass: this.state.menuOpen ? "sheet open" : "sheet",
       toggleMenu: ()=> this.setState(s=>({menuOpen:!s.menuOpen})),
       closeMenu: ()=> this.setState({menuOpen:false}),
-      onSubmit: (e)=>{ e.preventDefault(); this.setState({sent:true}); },
-      sendLabel: this.state.sent ? t.fSent : t.fSend,
+      onSubmit: (e)=>{
+        e.preventDefault();
+        if (this.state.sending) return;
+        const form = e.target;
+        this.setState({ sending:true, error:false });
+        fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Accept": "application/json" },
+          body: new FormData(form),
+        }).then(res => res.json()).then(data => {
+          if (data.success) { this.setState({ sending:false, sent:true }); form.reset(); }
+          else { this.setState({ sending:false, error:true }); }
+        }).catch(() => { this.setState({ sending:false, error:true }); });
+      },
+      sending: this.state.sending,
+      sendLabel: this.state.sending ? t.fSending : this.state.sent ? t.fSent : this.state.error ? t.fError : t.fSend,
     };
   }
 }
