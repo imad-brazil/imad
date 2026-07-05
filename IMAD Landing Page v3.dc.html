@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#08221492; --ink0:#061A10; --ink1:#0B2A1A; --ink2:#123825;
+    --cream:#F3F0E6; --cream2:#EAE6D6; --paper:#FFFFFF;
+    --lime:#9EE05B; --lime2:#B6EC7C; --leaf:#2BA24C; --leaf-deep:#17772F;
+    --water:#5FBAD1; --clay:#E08A4B; --sand:#CBAE7E;
+    --txt:#1B2A20; --muted:#5F6F63; --faint:#93A096;
+    --cream-line:#DDD8C6; --dark-line:rgba(255,255,255,.12);
+    --sh:0 2px 10px rgba(6,26,16,.06),0 16px 44px rgba(6,26,16,.08);
+    --sh-lg:0 30px 80px rgba(6,26,16,.2);
+    --r:20px; --rl:30px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:80px; -webkit-text-size-adjust:100%}
+  body{margin:0; background:var(--cream); color:var(--txt);
+    font-family:'Manrope',system-ui,sans-serif; font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden}
+  img{max-width:100%; display:block}
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3,h4{margin:0; line-height:1.02; letter-spacing:-.03em; font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:700; color:var(--ink1)}
+  p{margin:0}
+  ::selection{background:var(--lime); color:var(--ink0)}
+  .wrap{max-width:1280px; margin:0 auto; padding:0 32px}
+  .serif{font-family:'Newsreader',Georgia,serif; font-style:italic; font-weight:400}
+  .disp{font-family:'Bricolage Grotesque',sans-serif; font-weight:800; letter-spacing:-.04em; line-height:.98}
+
+  /* reveal */
+  .rv{opacity:0; transform:translateY(34px); transition:opacity 1s cubic-bezier(.16,.84,.44,1), transform 1s cubic-bezier(.16,.84,.44,1)}
+  .rv.in{opacity:1; transform:none}
+  .rv-clip{clip-path:inset(0 0 100% 0); transition:clip-path 1.1s cubic-bezier(.16,.84,.44,1)}
+  .rv-clip.in{clip-path:inset(0 0 0 0)}
+  [data-d="1"]{transition-delay:.1s}[data-d="2"]{transition-delay:.2s}[data-d="3"]{transition-delay:.3s}[data-d="4"]{transition-delay:.4s}[data-d="5"]{transition-delay:.5s}
+  @media (prefers-reduced-motion:reduce){.rv,.rv-clip{opacity:1!important; transform:none!important; clip-path:none!important; transition:none}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+  @keyframes heroWord{from{opacity:0; transform:translateY(120%) rotate(2deg)}to{opacity:1; transform:none}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+  /* header */
+  .hdr{position:fixed; top:0; left:0; right:0; z-index:60; transition:background .35s, box-shadow .35s, backdrop-filter .35s;
+    background:transparent}
+  .hdr.stuck{background:rgba(243,240,230,.9); backdrop-filter:saturate(1.4) blur(16px); -webkit-backdrop-filter:saturate(1.4) blur(16px); box-shadow:0 1px 0 var(--cream-line)}
+  .hdr-in{display:flex; align-items:center; gap:22px; height:78px}
+  .brand{display:flex; align-items:center; gap:12px; margin-right:auto}
+  .brand img{height:40px; width:auto}
+  .brand .bt{font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:23px; letter-spacing:.03em; line-height:1; display:block; color:#fff; transition:color .35s}
+  .brand .bs{font-size:10px; line-height:1.2; margin-top:3px; max-width:220px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; color:rgba(255,255,255,.7); transition:color .35s}
+  .hdr.stuck .brand .bt{color:var(--ink1)} .hdr.stuck .brand .bs{color:var(--muted)}
+  .nav{display:flex; align-items:center; gap:2px}
+  .nav a{padding:9px 13px; border-radius:11px; font-weight:600; font-size:14.5px; color:rgba(255,255,255,.86); transition:color .18s, background .18s; white-space:nowrap}
+  .nav a:hover{color:#fff; background:rgba(255,255,255,.12)}
+  .hdr.stuck .nav a{color:var(--txt)} .hdr.stuck .nav a:hover{color:var(--leaf-deep); background:rgba(43,162,76,.1)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px; border:none; cursor:pointer; font-family:'Manrope',sans-serif; font-weight:700; border-radius:999px; transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, background .2s, color .2s; white-space:nowrap}
+  .btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(0)}
+  .btn-lime{background:var(--lime); color:var(--ink0); padding:12px 24px; font-size:15px; box-shadow:0 8px 24px rgba(158,224,91,.34)}
+  .btn-lime:hover{background:var(--lime2); box-shadow:0 14px 34px rgba(158,224,91,.44)}
+  .btn-dark{background:var(--ink1); color:#fff; padding:12px 24px; font-size:15px}
+  .btn-dark:hover{background:var(--ink2)}
+  .btn-outline{background:transparent; color:#fff; padding:12px 24px; font-size:15px; border:1.5px solid rgba(255,255,255,.4)}
+  .btn-outline:hover{border-color:#fff; background:rgba(255,255,255,.08)}
+  .btn-outline.dark{color:var(--ink1); border-color:var(--cream-line)}
+  .btn-outline.dark:hover{border-color:var(--leaf); background:rgba(43,162,76,.06)}
+  .btn-lg{padding:17px 34px; font-size:16.5px}
+  .lang{display:inline-flex; align-items:center; border:1.5px solid rgba(255,255,255,.3); border-radius:999px; padding:3px}
+  .hdr.stuck .lang{border-color:var(--cream-line)}
+  .lang button{border:none; background:transparent; cursor:pointer; font-family:'Manrope',sans-serif; font-weight:700; font-size:12.5px; color:rgba(255,255,255,.7); padding:6px 12px; border-radius:999px; letter-spacing:.04em; transition:all .18s}
+  .hdr.stuck .lang button{color:var(--muted)}
+  .lang button.on{background:var(--lime); color:var(--ink0)}
+  .ham{display:none; flex-direction:column; gap:5px; width:46px; height:46px; align-items:center; justify-content:center; background:rgba(255,255,255,.14); border:1.5px solid rgba(255,255,255,.3); border-radius:13px; cursor:pointer}
+  .hdr.stuck .ham{background:var(--paper); border-color:var(--cream-line)}
+  .ham span{width:20px; height:2px; background:#fff; border-radius:2px; transition:.25s}
+  .hdr.stuck .ham span{background:var(--ink1)}
+
+  .sheet{position:fixed; inset:0; z-index:70; display:none}
+  .sheet.open{display:block}
+  .sheet-bg{position:absolute; inset:0; background:rgba(6,26,16,.5); backdrop-filter:blur(3px); animation:fade .25s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet-panel{position:absolute; top:0; right:0; bottom:0; width:min(88vw,380px); background:var(--ink0); box-shadow:-24px 0 70px rgba(0,0,0,.4); padding:24px; display:flex; flex-direction:column; gap:4px; animation:slideIn .32s cubic-bezier(.16,.84,.44,1); overflow-y:auto}
+  @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+  .sheet-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px}
+  .sheet-panel a{padding:15px; border-radius:14px; font-weight:700; font-size:19px; color:#fff; transition:.15s; font-family:'Bricolage Grotesque',sans-serif}
+  .sheet-panel a:hover{background:rgba(255,255,255,.08); color:var(--lime)}
+  .x{width:44px; height:44px; border-radius:13px; border:1.5px solid rgba(255,255,255,.25); background:transparent; cursor:pointer; font-size:20px; color:#fff; display:grid; place-items:center}
+  .sheet-panel .lang{border-color:rgba(255,255,255,.25)}
+
+  section{position:relative}
+  .sec{padding:130px 0}
+  .kicker{display:inline-flex; align-items:center; gap:11px; font-weight:700; font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--leaf-deep)}
+  .kicker::before{content:""; width:30px; height:2px; background:var(--leaf); border-radius:2px}
+  .kicker.lime{color:var(--lime)} .kicker.lime::before{background:var(--lime)}
+  .kicker.center{justify-content:center}
+  .h-sec{font-size:clamp(38px,6vw,74px); margin:22px 0 0; max-width:16ch; text-wrap:balance}
+  .lead{font-size:clamp(17px,2vw,20px); color:var(--muted); margin-top:22px; max-width:56ch; line-height:1.7}
+  .dark .lead{color:rgba(243,240,230,.76)}
+  .dark h1,.dark h2,.dark h3,.dark h4{color:#fff}
+
+  /* ===== HERO ===== */
+  .hero{min-height:100vh; display:flex; align-items:flex-end; overflow:hidden; padding-bottom:64px}
+  .hero-bg{position:absolute; inset:0; z-index:0}
+  .hero-bg img{width:100%; height:120%; object-fit:cover; will-change:transform}
+  .hero-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,26,16,.5) 0%, rgba(6,26,16,.35) 40%, rgba(6,26,16,.86) 100%)}
+  .hero-bg::before{content:""; position:absolute; inset:0; z-index:1; background:radial-gradient(1000px 700px at 78% 8%, rgba(158,224,91,.16), transparent 60%)}
+  .hero-inner{position:relative; z-index:2; width:100%; color:#fff}
+  .hero-kick{display:inline-flex; align-items:center; gap:11px; font-weight:700; font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--lime); margin-bottom:26px}
+  .hero-kick::before{content:""; width:34px; height:2px; background:var(--lime)}
+  .hero h1{color:#fff; font-size:clamp(48px,9vw,128px); font-weight:800; letter-spacing:-.045em; line-height:.92; max-width:15ch}
+  .hero h1 .w{display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.04em}
+  .hero h1 .w>span{display:inline-block; animation:heroWord 1s cubic-bezier(.16,.84,.44,1) both}
+  .hero h1 em{font-family:'Newsreader',serif; font-style:italic; font-weight:400; color:var(--lime)}
+  .hero-sub{display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-top:40px; flex-wrap:wrap}
+  .hero-lead{font-size:clamp(17px,1.9vw,20.5px); color:rgba(255,255,255,.86); max-width:46ch; line-height:1.65}
+  .hero-tag{font-family:'Newsreader',serif; font-style:italic; font-size:clamp(19px,2.2vw,24px); color:var(--lime); margin-top:18px}
+  .hero-cta{display:flex; gap:14px; flex-wrap:wrap}
+  .hero-meta{display:flex; gap:34px; margin-top:52px; padding-top:30px; border-top:1px solid rgba(255,255,255,.2); flex-wrap:wrap}
+  .hero-meta .n{font-family:'Bricolage Grotesque',sans-serif; font-size:30px; font-weight:800; color:#fff; letter-spacing:-.02em; line-height:1}
+  .hero-meta .l{font-size:12px; color:rgba(255,255,255,.6); font-weight:600; margin-top:4px; letter-spacing:.03em}
+  .scrollcue{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; color:rgba(255,255,255,.6); font-size:11px; letter-spacing:.2em; text-transform:uppercase}
+  .scrollcue svg{animation:bob 1.8s ease-in-out infinite}
+
+  /* ===== MARQUEE ===== */
+  .marquee{background:var(--lime); overflow:hidden; padding:22px 0; border-top:3px solid var(--ink0); border-bottom:3px solid var(--ink0)}
+  .marquee-track{display:flex; width:max-content; animation:marquee 34s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee-track span{font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:clamp(22px,3vw,34px); letter-spacing:-.02em; color:var(--ink0); display:inline-flex; align-items:center; white-space:nowrap}
+  .marquee-track .sep{margin:0 26px; width:20px; height:18px; flex:none}
+
+  /* ===== ABOUT ===== */
+  .about-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:72px; align-items:center}
+  .about-imgwrap{position:relative}
+  .about-img{border-radius:var(--rl); overflow:hidden; box-shadow:var(--sh-lg); aspect-ratio:1/1}
+  .about-img img{width:100%; height:100%; object-fit:cover}
+  .about-tag{position:absolute; left:-26px; bottom:-26px; background:var(--ink0); color:#fff; border-radius:22px; padding:24px 28px; max-width:260px; box-shadow:var(--sh-lg)}
+  .about-tag .serif{font-size:20px; line-height:1.4; color:var(--lime)}
+  .chips{display:flex; gap:11px; flex-wrap:wrap; margin-top:28px}
+  .chip{display:inline-flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--cream-line); border-radius:999px; padding:10px 18px; font-size:13.5px; font-weight:600; color:var(--ink1); box-shadow:var(--sh)}
+  .chip .dot{width:8px; height:8px; border-radius:50%; background:var(--leaf)}
+
+  /* pillars */
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:90px}
+  .pillar{background:var(--paper); border:1px solid var(--cream-line); border-radius:var(--r); padding:36px 30px; box-shadow:var(--sh); transition:transform .35s cubic-bezier(.16,.84,.44,1), box-shadow .35s; position:relative; overflow:hidden}
+  .pillar .bignum{position:absolute; top:-14px; right:6px; font-family:'Newsreader',serif; font-style:italic; font-size:120px; color:var(--cream2); z-index:0; line-height:1}
+  .pillar>*{position:relative; z-index:1}
+  .pillar:hover{transform:translateY(-8px); box-shadow:var(--sh-lg)}
+  .pillar .pico{width:60px; height:60px; border-radius:17px; display:grid; place-items:center; margin-bottom:22px}
+  .pillar h3{font-size:23px; margin-bottom:11px}
+  .pillar p{font-size:15px; color:var(--muted); line-height:1.62}
+
+  /* ===== PROGRAMS ===== */
+  .programs{background:var(--ink0); color:#fff; overflow:hidden}
+  .programs::before{content:""; position:absolute; inset:0; background:radial-gradient(800px 500px at 90% 0%, rgba(158,224,91,.12), transparent 55%); pointer-events:none}
+  .prog-list{margin-top:64px; border-top:1px solid var(--dark-line)}
+  .prog-row{display:grid; grid-template-columns:auto 1fr auto; gap:36px; align-items:center; padding:34px 8px; border-bottom:1px solid var(--dark-line); cursor:default; transition:padding .35s, background .35s; position:relative}
+  .prog-row .pnum{font-family:'Newsreader',serif; font-style:italic; font-size:26px; color:var(--lime); width:52px}
+  .prog-row .ptext{display:flex; flex-direction:column; gap:8px}
+  .prog-row h3{font-family:'Bricolage Grotesque',sans-serif; font-size:clamp(24px,3.4vw,40px); font-weight:700; color:#fff; letter-spacing:-.03em; transition:transform .35s, color .35s}
+  .prog-row p{font-size:15px; color:rgba(243,240,230,.66); max-width:60ch; opacity:0; max-height:0; overflow:hidden; transition:opacity .4s, max-height .4s, margin .4s}
+  .prog-row .picon{width:56px; height:56px; border-radius:50%; border:1.5px solid var(--dark-line); display:grid; place-items:center; color:var(--lime); transition:background .35s, transform .35s, color .35s; flex:none}
+  .prog-row:hover{background:rgba(255,255,255,.03); padding-left:20px; padding-right:20px}
+  .prog-row:hover h3{color:var(--lime)}
+  .prog-row:hover p{opacity:1; max-height:80px; margin-top:2px}
+  .prog-row:hover .picon{background:var(--lime); color:var(--ink0); transform:rotate(-45deg)}
+
+  /* ===== IMPACT ===== */
+  .impact{background:var(--ink1); color:#fff; overflow:hidden}
+  .impact::before{content:""; position:absolute; inset:0; background:radial-gradient(700px 500px at 12% 20%, rgba(95,186,209,.14), transparent 55%); pointer-events:none}
+  .impact-top{display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:end}
+  .impact-tag{font-family:'Newsreader',serif; font-style:italic; font-size:clamp(22px,3vw,32px); color:var(--lime); line-height:1.35; max-width:20ch}
+  .impact-imgs{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:70px}
+  .impact-imgs figure{margin:0; border-radius:22px; overflow:hidden; position:relative; box-shadow:var(--sh-lg); aspect-ratio:4/3}
+  .impact-imgs img{width:100%; height:100%; object-fit:cover}
+  .impact-imgs figcaption{position:absolute; left:14px; bottom:14px; background:rgba(6,26,16,.72); color:#fff; font-size:12px; font-weight:700; letter-spacing:.04em; padding:8px 14px; border-radius:999px; backdrop-filter:blur(6px)}
+  .impact-imgs figure:last-child figcaption{background:var(--leaf-deep)}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:28px; margin-top:96px; padding-top:56px; border-top:1px solid var(--dark-line)}
+  .stat .n{font-family:'Bricolage Grotesque',sans-serif; font-size:clamp(44px,6vw,68px); font-weight:800; color:#fff; letter-spacing:-.04em; line-height:1; display:flex; align-items:baseline}
+  .stat .n .suf{color:var(--lime); font-size:.5em; margin-left:6px; letter-spacing:-.02em}
+  .stat .l{font-size:14px; color:rgba(243,240,230,.66); margin-top:12px; font-weight:600}
+  .stat .bar{height:3px; background:var(--dark-line); margin-top:18px; border-radius:2px; overflow:hidden}
+  .stat .bar i{display:block; height:100%; background:var(--lime); width:100%; transform:scaleX(0); transform-origin:left; transition:transform 1.2s cubic-bezier(.16,.84,.44,1) .3s}
+  .stats.in .stat .bar i{transform:scaleX(1)}
+
+  /* ===== GALLERY ===== */
+  .gal{display:grid; grid-template-columns:repeat(12,1fr); gap:16px; margin-top:60px}
+  .gal figure{margin:0; border-radius:20px; overflow:hidden; position:relative; box-shadow:var(--sh); cursor:pointer}
+  .gal figure img{width:100%; height:100%; object-fit:cover; transition:transform .7s cubic-bezier(.16,.84,.44,1)}
+  .gal figure:hover img{transform:scale(1.09)}
+  .gal figure::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(6,26,16,.66)); opacity:0; transition:.4s}
+  .gal figure:hover::after{opacity:1}
+  .gal figcaption{position:absolute; left:20px; right:20px; bottom:18px; color:#fff; font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:16px; z-index:2; opacity:0; transform:translateY(12px); transition:.4s}
+  .gal figure:hover figcaption{opacity:1; transform:none}
+  .gal .t1{grid-column:span 7; grid-row:span 2; min-height:440px}
+  .gal .t2{grid-column:span 5; min-height:212px}
+  .gal .t3{grid-column:span 5; min-height:212px}
+  .gal .t4{grid-column:span 4; min-height:300px}
+  .gal .t5{grid-column:span 4; min-height:300px}
+  .gal .t6{grid-column:span 4; min-height:300px}
+
+  /* ===== VIDEOS ===== */
+  .vid-empty{margin-top:60px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; padding:84px 24px; border:1.5px dashed var(--cream-line); border-radius:var(--rl); background:var(--paper)}
+  .vid-empty-ico{width:74px; height:74px; border-radius:22px; background:var(--ink0); color:var(--lime); display:grid; place-items:center}
+  .vid-empty p{font-size:16.5px; color:var(--muted); max-width:38ch}
+
+  /* ===== READING ===== */
+  .read-band{background:var(--cream2)}
+  .read-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:60px}
+  .read{display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--cream-line); border-radius:var(--r); padding:34px 30px; box-shadow:var(--sh); transition:transform .35s cubic-bezier(.16,.84,.44,1), box-shadow .35s}
+  .read:hover{transform:translateY(-8px); box-shadow:var(--sh-lg)}
+  .read .rico{width:56px; height:56px; border-radius:16px; background:var(--cream2); color:var(--clay); display:grid; place-items:center; margin-bottom:22px; border:1px solid #e2d8c1}
+  .read .tag{font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--water)}
+  .read h3{font-size:20px; margin:10px 0 9px}
+  .read p{font-size:14.5px; color:var(--muted); flex:1; line-height:1.6}
+  .read .more{margin-top:22px; font-weight:700; font-size:14.5px; color:var(--leaf-deep); display:inline-flex; align-items:center; gap:8px; transition:gap .2s}
+  .read:hover .more{gap:13px}
+
+  /* ===== ECOLINKS ===== */
+  .eco-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:60px}
+  .eco{display:flex; align-items:center; gap:20px; background:var(--paper); border:1px solid var(--cream-line); border-radius:16px; padding:22px 24px; box-shadow:var(--sh); transition:transform .22s, box-shadow .22s, border-color .22s}
+  .eco:hover{transform:translateY(-4px); box-shadow:var(--sh-lg); border-color:#c6dfbf}
+  .eco .ei{width:50px; height:50px; border-radius:14px; background:var(--ink0); color:var(--lime); display:grid; place-items:center; flex:none}
+  .eco .et{font-family:'Bricolage Grotesque',sans-serif; font-weight:700; color:var(--ink1); font-size:16.5px}
+  .eco .ed{font-size:13.5px; color:var(--muted); margin-top:2px}
+  .eco .arr{margin-left:auto; color:var(--faint); transition:transform .22s, color .22s; flex:none}
+  .eco:hover .arr{transform:translate(4px,-4px); color:var(--leaf-deep)}
+
+  /* ===== DONATE ===== */
+  .donate{background:var(--ink0); color:#fff; overflow:hidden; position:relative}
+  .donate::before{content:""; position:absolute; inset:0; background:radial-gradient(760px 520px at 84% 88%, rgba(158,224,91,.18), transparent 58%); pointer-events:none}
+  .donate .deco{position:absolute; opacity:.05; pointer-events:none}
+  .donate-grid{display:grid; grid-template-columns:1.02fr 1fr; gap:64px; align-items:center; position:relative; z-index:2}
+  .donate h2{font-size:clamp(36px,5vw,60px); margin-top:18px; text-wrap:balance}
+  .reassure{display:flex; gap:13px; align-items:flex-start; margin-top:30px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); border-radius:16px; padding:18px 20px}
+  .reassure svg{flex:none; color:var(--lime); margin-top:2px}
+  .reassure p{font-size:14.5px; color:rgba(255,255,255,.9); line-height:1.55}
+  .kind-list{display:flex; flex-direction:column; gap:12px}
+  .kind{display:flex; gap:15px; align-items:flex-start; padding:15px; border-radius:14px; border:1px solid var(--cream-line); transition:.2s}
+  .kind:hover{border-color:var(--leaf); background:#FCFEFC}
+  .kind .ki{width:42px; height:42px; border-radius:12px; background:var(--cream2); color:var(--leaf-deep); display:grid; place-items:center; flex:none}
+  .kind .kt{font-family:'Bricolage Grotesque',sans-serif; font-weight:700; color:var(--ink1); font-size:15.5px}
+  .kind .kd{font-size:13.5px; color:var(--muted); margin-top:2px}
+  .dcard{background:var(--paper); border-radius:var(--rl); padding:40px; box-shadow:var(--sh-lg); color:var(--txt)}
+  .dcard h3{color:var(--ink1); font-size:24px}
+  .dtabs{display:flex; gap:8px; background:var(--cream); border:1px solid var(--cream-line); border-radius:15px; padding:5px; margin:20px 0 24px}
+  .dtab{flex:1; border:none; background:transparent; font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; color:var(--muted); padding:12px; border-radius:11px; cursor:pointer; transition:.18s}
+  .dtab.on{background:var(--paper); color:var(--ink1); box-shadow:var(--sh)}
+  .amts{display:grid; grid-template-columns:repeat(3,1fr); gap:11px}
+  .amt{padding:19px 6px; border-radius:14px; border:1.6px solid var(--cream-line); background:var(--paper); font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:19px; color:var(--ink1); cursor:pointer; transition:.18s}
+  .amt:hover{border-color:var(--leaf)}
+  .amt.on{border-color:var(--leaf-deep); background:rgba(43,162,76,.1); color:var(--leaf-deep); box-shadow:0 6px 18px rgba(43,162,76,.16)}
+  .custom{margin-top:11px; display:flex; align-items:center; gap:10px; border:1.6px solid var(--cream-line); border-radius:14px; padding:0 17px; transition:border-color .18s}
+  .custom:focus-within{border-color:var(--leaf-deep)}
+  .custom span{font-weight:800; color:var(--muted); font-size:16px}
+  .custom input{flex:1; border:none; outline:none; font-family:'Manrope',sans-serif; font-weight:700; font-size:17px; color:var(--ink1); padding:17px 0; background:transparent}
+  .freq{display:flex; gap:9px; margin-top:15px}
+  .freq button{flex:1; border:1.4px solid var(--cream-line); background:var(--paper); font-family:'Manrope',sans-serif; font-weight:600; font-size:13.5px; color:var(--muted); padding:11px; border-radius:11px; cursor:pointer; transition:.18s}
+  .freq button.on{border-color:var(--leaf-deep); color:var(--leaf-deep); background:rgba(43,162,76,.08)}
+  .dcard .btn-lime{width:100%; margin-top:22px; padding:18px}
+  .hidden-pane{display:none}
+
+  /* ===== CONTACT ===== */
+  .contact-grid{display:grid; grid-template-columns:.86fr 1.14fr; gap:64px}
+  .cinfo{display:flex; flex-direction:column}
+  .crow{display:flex; gap:17px; align-items:flex-start; padding:20px 0; border-bottom:1px solid var(--cream-line)}
+  .crow .ci{width:48px; height:48px; border-radius:13px; background:var(--ink0); color:var(--lime); display:grid; place-items:center; flex:none}
+  .crow .cl{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .crow .cv{font-family:'Bricolage Grotesque',sans-serif; font-weight:700; color:var(--ink1); font-size:16.5px; margin-top:3px}
+  .crow a.cv:hover{color:var(--leaf-deep)}
+  .credits{margin-top:28px; font-size:13.5px; color:var(--muted); line-height:1.7}
+  .credits b{color:var(--ink1)}
+  .form{background:var(--paper); border:1px solid var(--cream-line); border-radius:var(--r); padding:38px; box-shadow:var(--sh)}
+  .frow{display:grid; grid-template-columns:1fr 1fr; gap:15px}
+  .field{margin-bottom:15px}
+  .field label{display:block; font-size:13px; font-weight:700; color:var(--ink1); margin-bottom:8px}
+  .field input,.field textarea{width:100%; border:1.5px solid var(--cream-line); border-radius:13px; padding:15px 16px; font-family:'Manrope',sans-serif; font-size:15px; color:var(--txt); background:var(--cream); transition:border-color .18s, background .18s; resize:vertical}
+  .field input:focus,.field textarea:focus{outline:none; border-color:var(--leaf-deep); background:var(--paper)}
+  .form .btn-dark{width:100%; padding:17px; margin-top:4px}
+
+  /* ===== FOOTER ===== */
+  footer{background:var(--ink0); color:rgba(243,240,230,.66)}
+  .foot-img{height:240px; overflow:hidden; position:relative}
+  .foot-img img{width:100%; height:100%; object-fit:cover; opacity:.4}
+  .foot-img::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(6,26,16,.4),var(--ink0))}
+  .foot-cta{position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:22px; padding:0 24px}
+  .foot-cta h3{color:#fff; font-size:clamp(28px,4vw,48px); max-width:18ch}
+  .foot-main{padding:76px 0 46px}
+  .foot-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:52px}
+  .foot-brand .flogo{display:flex; align-items:center; gap:14px; margin-bottom:20px}
+  .foot-brand .flogo img{height:56px; width:auto}
+  .foot-brand .flogo span{font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:34px; letter-spacing:.02em; color:#fff}
+  .foot-brand p{font-size:14.5px; line-height:1.7; max-width:40ch}
+  .foot-col h4{color:#fff; font-size:13.5px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:18px; font-family:'Manrope',sans-serif; font-weight:700}
+  .foot-col a{display:block; padding:6px 0; font-size:14.5px; color:rgba(243,240,230,.66); transition:.15s}
+  .foot-col a:hover{color:var(--lime)}
+  .socials{display:flex; gap:11px; margin-top:20px}
+  .socials a{width:44px; height:44px; border-radius:13px; border:1px solid rgba(255,255,255,.16); display:grid; place-items:center; color:#fff; transition:.22s}
+  .socials a:hover{background:var(--lime); border-color:var(--lime); color:var(--ink0); transform:translateY(-3px)}
+  .foot-bot{border-top:1px solid var(--dark-line); padding:26px 0; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:13.5px}
+
+  /* mobile sticky bar */
+  .mobar{position:fixed; left:0; right:0; bottom:0; z-index:55; display:none; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); background:rgba(6,26,16,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); gap:12px}
+  .mobar .btn{flex:1}
+
+  /* responsive */
+  @media (max-width:1080px){
+    .gal{grid-template-columns:repeat(2,1fr)}
+    .gal .t1,.gal .t2,.gal .t3,.gal .t4,.gal .t5,.gal .t6{grid-column:span 1; grid-row:span 1; min-height:240px}
+    .gal .t1{grid-column:span 2; min-height:320px}
+  }
+  @media (max-width:1024px){
+    .nav, .hdr .lang.desk{display:none}
+    .ham{display:flex}
+  }
+  @media (max-width:920px){
+    .sec{padding:96px 0}
+    .about-grid,.impact-top,.donate-grid,.contact-grid{grid-template-columns:1fr; gap:52px}
+    .pillars,.read-grid{grid-template-columns:1fr 1fr}
+    .stats{grid-template-columns:repeat(2,1fr); gap:40px 28px}
+    .impact-imgs{max-width:520px}
+    .brand .bs{display:none}
+  }
+  @media (max-width:600px){
+    body{font-size:16px}
+    .wrap{padding:0 20px}
+    .sec{padding:72px 0}
+    .hero{padding-bottom:120px}
+    .pillars,.read-grid,.eco-grid{grid-template-columns:1fr}
+    .amts{grid-template-columns:repeat(3,1fr)}
+    .frow{grid-template-columns:1fr}
+    .gal{gap:12px}
+    .foot-grid{grid-template-columns:1fr; gap:40px}
+    .about-tag{position:relative; left:auto; bottom:auto; margin-top:20px; max-width:none}
+    .hero-sub{flex-direction:column; align-items:flex-start; gap:28px}
+    .hero-meta{gap:24px}
+    .prog-row{grid-template-columns:auto 1fr; gap:20px}
+    .prog-row .picon{display:none}
+    .prog-row p{opacity:1; max-height:none; margin-top:6px}
+    .dcard,.form{padding:26px}
+    .mobar{display:flex}
+    footer{padding-bottom:76px}
+  }
+</style>
+</helmet>
+
+<div>
+  <!-- HEADER -->
+  <header class="hdr" data-hdr>
+    <div class="wrap hdr-in">
+      <a href="#home" class="brand" onClick="{{ closeMenu }}">
+        <img src="assets/imad-symbol.png" alt="IMAD">
+        <span><span class="bt">IMAD</span><span class="bs">{{ t.brandSub }}</span></span>
+      </a>
+      <nav class="nav">
+        <a href="#about">{{ t.nav.about }}</a>
+        <a href="#programs">{{ t.progKicker }}</a>
+        <a href="#impact">{{ t.impactKicker }}</a>
+        <a href="#images">{{ t.nav.images }}</a>
+        <a href="#videos">{{ t.nav.videos }}</a>
+        <a href="#reading">{{ t.nav.reading }}</a>
+        <a href="#ecolinks">{{ t.nav.ecolinks }}</a>
+        <a href="#contact">{{ t.nav.contact }}</a>
+      </nav>
+      <div class="lang desk">
+        <button class="{{ ptClass }}" onClick="{{ setPt }}">PT</button>
+        <button class="{{ enClass }}" onClick="{{ setEn }}">EN</button>
+      </div>
+      <a href="#donate" class="btn btn-lime">{{ t.nav.donate }}</a>
+      <button class="ham" onClick="{{ toggleMenu }}" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="{{ sheetClass }}">
+    <div class="sheet-bg" onClick="{{ closeMenu }}"></div>
+    <div class="sheet-panel">
+      <div class="sheet-top">
+        <div class="lang">
+          <button class="{{ ptClass }}" onClick="{{ setPt }}">PT</button>
+          <button class="{{ enClass }}" onClick="{{ setEn }}">EN</button>
+        </div>
+        <button class="x" onClick="{{ closeMenu }}" aria-label="Close">&times;</button>
+      </div>
+      <a href="#about" onClick="{{ closeMenu }}">{{ t.nav.about }}</a>
+      <a href="#programs" onClick="{{ closeMenu }}">{{ t.progKicker }}</a>
+      <a href="#impact" onClick="{{ closeMenu }}">{{ t.impactKicker }}</a>
+      <a href="#images" onClick="{{ closeMenu }}">{{ t.nav.images }}</a>
+      <a href="#videos" onClick="{{ closeMenu }}">{{ t.nav.videos }}</a>
+      <a href="#reading" onClick="{{ closeMenu }}">{{ t.nav.reading }}</a>
+      <a href="#ecolinks" onClick="{{ closeMenu }}">{{ t.nav.ecolinks }}</a>
+      <a href="#contact" onClick="{{ closeMenu }}">{{ t.nav.contact }}</a>
+      <a href="#donate" class="btn btn-lime btn-lg" style="margin-top:14px" onClick="{{ closeMenu }}">{{ t.nav.donate }}</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-bg"><img src="assets/img/hero.jpg" alt="{{ t.heroImgAlt }}" data-parallax></div>
+    <div class="wrap hero-inner">
+      <span class="hero-kick">{{ t.heroKicker }}</span>
+      <h1>{{ heroWords }}</h1>
+      <div class="hero-sub">
+        <div>
+          <p class="hero-lead">{{ t.heroLead }}</p>
+          <p class="hero-tag">&ldquo;{{ t.heroTag }}&rdquo;</p>
+        </div>
+        <div class="hero-cta">
+          <a href="#donate" class="btn btn-lime btn-lg">{{ t.ctaDonate }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </a>
+          <a href="#contact" class="btn btn-outline btn-lg">{{ t.ctaVolunteer }}</a>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div><div class="n">2002</div><div class="l">{{ t.heroM1 }}</div></div>
+        <div><div class="n">OSCIP</div><div class="l">{{ t.heroM2 }}</div></div>
+        <div><div class="n">Dourados&middot;MS</div><div class="l">{{ t.heroM3 }}</div></div>
+      </div>
+    </div>
+    <div class="scrollcue">{{ t.scroll }}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="marquee-track">{{ marquee }}</div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" class="sec">
+    <div class="wrap">
+      <div class="about-grid">
+        <div class="about-imgwrap rv rv-clip">
+          <div class="about-img"><img src="assets/img/about.jpg" alt="{{ t.aboutImgAlt }}"></div>
+          <div class="about-tag"><span class="serif">&ldquo;{{ t.impactTag }}&rdquo;</span></div>
+        </div>
+        <div class="rv" data-d="1">
+          <span class="kicker">{{ t.aboutKicker }}</span>
+          <h2 class="h-sec">{{ t.aboutTitle }}</h2>
+          <p class="lead">{{ t.aboutP1 }}</p>
+          <p class="lead" style="margin-top:16px">{{ t.aboutP2 }}</p>
+          <div class="chips">
+            <span class="chip"><span class="dot"></span>{{ t.chip1 }}</span>
+            <span class="chip"><span class="dot"></span>{{ t.chip2 }}</span>
+            <span class="chip"><span class="dot"></span>{{ t.chip3 }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="pillars">
+        <div class="pillar rv">
+          <span class="bignum">1</span>
+          <div class="pico" style="background:rgba(43,162,76,.12); color:var(--leaf-deep)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21v-1a5 5 0 0 1 5-5h2"/><circle cx="17" cy="10" r="2.5"/><path d="M21 21v-.5a4 4 0 0 0-4-4h-1"/></svg></div>
+          <h3>{{ t.pillar1t }}</h3><p>{{ t.pillar1d }}</p>
+        </div>
+        <div class="pillar rv" data-d="1">
+          <span class="bignum">2</span>
+          <div class="pico" style="background:rgba(95,186,209,.16); color:#2E7C93"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M5 7c2 0 4 1 7 1s5-1 7-1M5 7v6c0 2 3 3 7 3s7-1 7-3V7"/></svg></div>
+          <h3>{{ t.pillar2t }}</h3><p>{{ t.pillar2d }}</p>
+        </div>
+        <div class="pillar rv" data-d="2">
+          <span class="bignum">3</span>
+          <div class="pico" style="background:rgba(224,138,75,.14); color:var(--clay)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div>
+          <h3>{{ t.pillar3t }}</h3><p>{{ t.pillar3d }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section id="programs" class="sec programs dark">
+    <div class="wrap">
+      <div class="rv" style="max-width:56ch">
+        <span class="kicker lime">{{ t.progKicker }}</span>
+        <h2 class="h-sec">{{ t.progTitle }}</h2>
+        <p class="lead">{{ t.progLead }}</p>
+      </div>
+      <div class="prog-list">
+        <div class="prog-row rv"><span class="pnum">01</span><div class="ptext"><h3>{{ t.prog1t }}</h3><p>{{ t.prog1d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="prog-row rv"><span class="pnum">02</span><div class="ptext"><h3>{{ t.prog2t }}</h3><p>{{ t.prog2d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="prog-row rv"><span class="pnum">03</span><div class="ptext"><h3>{{ t.prog3t }}</h3><p>{{ t.prog3d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="prog-row rv"><span class="pnum">04</span><div class="ptext"><h3>{{ t.prog4t }}</h3><p>{{ t.prog4d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="prog-row rv"><span class="pnum">05</span><div class="ptext"><h3>{{ t.prog5t }}</h3><p>{{ t.prog5d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="prog-row rv"><span class="pnum">06</span><div class="ptext"><h3>{{ t.prog6t }}</h3><p>{{ t.prog6d }}</p></div><span class="picon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact" class="sec impact dark">
+    <div class="wrap">
+      <div class="impact-top">
+        <div class="rv">
+          <span class="kicker lime">{{ t.impactKicker }}</span>
+          <h2 class="h-sec">{{ t.impactTitle }}</h2>
+        </div>
+        <div class="rv" data-d="1">
+          <p class="impact-tag">&ldquo;{{ t.impactTag }}&rdquo;</p>
+          <p class="lead">{{ t.impactP1 }}</p>
+          <p class="lead" style="margin-top:14px">{{ t.impactP2 }}</p>
+        </div>
+      </div>
+      <div class="impact-imgs rv" data-d="1">
+        <figure><img src="assets/img/story-before.jpg" alt="{{ t.baBeforeAlt }}"><figcaption>{{ t.baBefore }}</figcaption></figure>
+        <figure><img src="assets/img/story-after.jpg" alt="{{ t.baAfterAlt }}"><figcaption>{{ photo2Caption }}</figcaption></figure>
+      </div>
+      <div class="stats" data-stats>
+        <div class="stat"><div class="n"><span class="cnt" data-to="120">0</span><span class="suf">mil</span></div><div class="l">{{ t.stat1 }}</div><div class="bar"><i></i></div></div>
+        <div class="stat"><div class="n"><span class="cnt" data-to="85">0</span><span class="suf">+</span></div><div class="l">{{ t.stat2 }}</div><div class="bar"><i></i></div></div>
+        <div class="stat"><div class="n"><span class="cnt" data-to="300">0</span><span class="suf">+</span></div><div class="l">{{ t.stat3 }}</div><div class="bar"><i></i></div></div>
+        <div class="stat"><div class="n"><span class="cnt" data-to="23">0</span></div><div class="l">{{ t.stat4 }}</div><div class="bar"><i></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGES -->
+  <section id="images" class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <span class="kicker">{{ t.imgKicker }}</span>
+        <h2 class="h-sec">{{ t.imgTitle }}</h2>
+        <p class="lead">{{ t.imgLead }}</p>
+      </div>
+      <div class="gal rv">
+        <figure class="t1"><img src="assets/img/g1.jpg" alt=""><figcaption>{{ t.gal1 }}</figcaption></figure>
+        <figure class="t2"><img src="assets/img/g2.jpg" alt=""><figcaption>{{ t.gal2 }}</figcaption></figure>
+        <figure class="t3"><img src="assets/img/g3.jpg" alt=""><figcaption>{{ t.gal3 }}</figcaption></figure>
+        <figure class="t4"><img src="assets/img/g4.jpg" alt=""><figcaption>{{ t.gal4 }}</figcaption></figure>
+        <figure class="t5"><img src="assets/img/g5.jpg" alt=""><figcaption>{{ t.gal5 }}</figcaption></figure>
+        <figure class="t6"><img src="assets/img/g6.jpg" alt=""><figcaption>{{ t.gal6 }}</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEOS -->
+  <section id="videos" class="sec read-band">
+    <div class="wrap">
+      <div class="rv">
+        <span class="kicker">{{ t.vidKicker }}</span>
+        <h2 class="h-sec">{{ t.vidTitle }}</h2>
+        <p class="lead">{{ t.vidLead }}</p>
+      </div>
+      <div class="vid-empty rv">
+        <span class="vid-empty-ico"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg></span>
+        <p>{{ t.vidEmpty }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- READING -->
+  <section id="reading" class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <span class="kicker">{{ t.readKicker }}</span>
+        <h2 class="h-sec">{{ t.readTitle }}</h2>
+        <p class="lead">{{ t.readLead }}</p>
+      </div>
+      <div class="read-grid">
+        <a class="read rv" href="#">
+          <div class="rico"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a0 0 0 0 1 0 0H4z"/><path d="M14 4v5h5M8 13h8M8 17h6"/></svg></div>
+          <span class="tag">{{ t.read1tag }}</span><h3>{{ t.read1t }}</h3><p>{{ t.read1d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="read rv" data-d="1" href="#">
+          <div class="rico"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2z"/><path d="M9 7h7M9 11h7"/></svg></div>
+          <span class="tag">{{ t.read2tag }}</span><h3>{{ t.read2t }}</h3><p>{{ t.read2d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="read rv" data-d="2" href="#">
+          <div class="rico"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div>
+          <span class="tag">{{ t.read3tag }}</span><h3>{{ t.read3t }}</h3><p>{{ t.read3d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECOLINKS -->
+  <section id="ecolinks" class="sec read-band">
+    <div class="wrap">
+      <div class="rv">
+        <span class="kicker">{{ t.ecoKicker }}</span>
+        <h2 class="h-sec">{{ t.ecoTitle }}</h2>
+        <p class="lead">{{ t.ecoLead }}</p>
+      </div>
+      <div class="eco-grid rv">
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></span><span><span class="et">{{ t.eco1t }}</span><span class="ed">{{ t.eco1d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 8 9 5 4 5c0 4 3 7 8 7zM12 12c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg></span><span><span class="et">{{ t.eco2t }}</span><span class="ed">{{ t.eco2d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21v-1a5 5 0 0 1 5-5h2"/><circle cx="17" cy="10" r="2.5"/><path d="M21 21v-.5a4 4 0 0 0-4-4h-1"/></svg></span><span><span class="et">{{ t.eco3t }}</span><span class="ed">{{ t.eco3d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"/></svg></span><span><span class="et">{{ t.eco4t }}</span><span class="ed">{{ t.eco4d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONATE -->
+  <section id="donate" class="sec donate dark">
+    <svg class="deco" style="left:-90px; bottom:-70px; width:400px" viewBox="0 0 20 18" fill="#fff"><path d="M10 0l3.4 6H6.6L10 0zM3.4 12L6.8 6 10 12H3.4zm13.2 0H10l3.2-6 3.4 6z"/></svg>
+    <div class="wrap">
+      <div class="donate-grid">
+        <div class="rv">
+          <span class="kicker lime">{{ t.donKicker }}</span>
+          <h2>{{ t.donTitle }}</h2>
+          <p class="lead">{{ t.donLead }}</p>
+          <div class="reassure">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            <p>{{ t.donReassure }}</p>
+          </div>
+        </div>
+        <div class="dcard rv" data-d="1">
+          <h3>{{ t.dCardTitle }}</h3>
+          <div class="dtabs">
+            <button class="{{ moneyTab }}" onClick="{{ setMoney }}">{{ t.dTabMoney }}</button>
+            <button class="{{ kindTab }}" onClick="{{ setKind }}">{{ t.dTabKind }}</button>
+          </div>
+          <div class="{{ moneyShow }}">
+            <div class="amts">
+              <button class="{{ a25 }}" onClick="{{ pick25 }}">R$25</button>
+              <button class="{{ a50 }}" onClick="{{ pick50 }}">R$50</button>
+              <button class="{{ a100 }}" onClick="{{ pick100 }}">R$100</button>
+            </div>
+            <div class="custom"><span>R$</span><input type="number" min="1" placeholder="{{ t.dCustom }}" value="{{ customVal }}" onInput="{{ onCustom }}" onFocus="{{ pickCustom }}"></div>
+            <div class="freq">
+              <button class="{{ fOnce }}" onClick="{{ setOnce }}">{{ t.dOnce }}</button>
+              <button class="{{ fMonthly }}" onClick="{{ setMonthly }}">{{ t.dMonthly }}</button>
+            </div>
+            <button class="btn btn-lime">{{ t.dGive }} {{ giveLabel }}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p style="font-size:12.5px; color:var(--muted); text-align:center; margin-top:16px">{{ t.dSecure }}</p>
+          </div>
+          <div class="{{ kindShow }}">
+            <p style="font-size:14.5px; color:var(--muted); line-height:1.6">{{ t.dKindBody }}</p>
+            <div class="kind-list" style="margin-top:20px">
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"/></svg></span><span><span class="kt">{{ t.dKind1 }}</span></span></div>
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7h-7L9 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg></span><span><span class="kt">{{ t.dKind2 }}</span></span></div>
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="7" r="4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></span><span><span class="kt">{{ t.dKind3 }}</span></span></div>
+            </div>
+            <a href="#contact" class="btn btn-lime" style="width:100%; margin-top:22px; padding:18px">{{ t.dKindCta }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="sec">
+    <div class="wrap">
+      <div class="rv" style="margin-bottom:56px">
+        <span class="kicker">{{ t.conKicker }}</span>
+        <h2 class="h-sec">{{ t.conTitle }}</h2>
+        <p class="lead">{{ t.conLead }}</p>
+      </div>
+      <div class="contact-grid">
+        <div class="rv">
+          <div class="cinfo">
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span><div class="cl">{{ t.conAddrL }}</div><div class="cv">Dourados &middot; Mato Grosso do Sul</div></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></span><span><div class="cl">{{ t.conEmailL }}</div><a class="cv" href="mailto:vitocomar@gmail.com">vitocomar@gmail.com</a></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg></span><span><div class="cl">{{ t.conPhoneL }}</div><a class="cv" href="tel:+5567991901919">+55 67 99190-1919</a></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></span><span><div class="cl">{{ t.conSocialL }}</div><a class="cv" href="#" target="_blank" rel="noopener">facebook.com/imad.dourados</a></span></div>
+          </div>
+          <div class="credits">{{ t.credits1 }} <b>Vito Comar</b>. {{ t.credits2 }}</div>
+        </div>
+        <form class="form rv" data-d="1" onSubmit="{{ onSubmit }}">
+          <div class="frow">
+            <div class="field"><label>{{ t.fName }}</label><input type="text" placeholder="{{ t.fNameP }}" required></div>
+            <div class="field"><label>{{ t.fEmail }}</label><input type="email" placeholder="{{ t.fEmailP }}" required></div>
+          </div>
+          <div class="field"><label>{{ t.fSubject }}</label><input type="text" placeholder="{{ t.fSubjectP }}"></div>
+          <div class="field"><label>{{ t.fMsg }}</label><textarea rows="5" placeholder="{{ t.fMsgP }}" required></textarea></div>
+          <button type="submit" class="btn btn-dark">{{ sendLabel }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-img">
+      <img src="assets/img/footer.jpg" alt="">
+      <div class="foot-cta rv">
+        <h3 class="disp">{{ t.donTitle }}</h3>
+        <a href="#donate" class="btn btn-lime btn-lg">{{ t.ctaDonate }}</a>
+      </div>
+    </div>
+    <div class="wrap foot-main">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <div class="flogo"><img src="assets/imad-symbol.png" alt="IMAD"><span>IMAD</span></div>
+          <p>{{ t.footStatement }}</p>
+          <div class="socials">
+            <a href="mailto:vitocomar@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></a>
+            <a href="tel:+5567991901919" aria-label="Phone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg></a>
+          </div>
+        </div>
+        <div class="foot-col">
+          <h4>{{ t.footNav }}</h4>
+          <a href="#about">{{ t.nav.about }}</a>
+          <a href="#programs">{{ t.progKicker }}</a>
+          <a href="#impact">{{ t.impactKicker }}</a>
+          <a href="#images">{{ t.nav.images }}</a>
+          <a href="#reading">{{ t.nav.reading }}</a>
+        </div>
+        <div class="foot-col">
+          <h4>{{ t.footGet }}</h4>
+          <a href="#donate">{{ t.nav.donate }}</a>
+          <a href="#contact">{{ t.ctaVolunteer }}</a>
+          <a href="#ecolinks">{{ t.nav.ecolinks }}</a>
+          <a href="#contact">{{ t.nav.contact }}</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap"><div class="foot-bot">
+      <span>&copy; {{ year }} IMAD &middot; {{ t.footRights }}</span>
+      <span>{{ t.footMade }}</span>
+    </div></div>
+  </footer>
+
+  <div class="mobar">
+    <a href="#donate" class="btn btn-lime">{{ t.ctaDonate }}</a>
+    <a href="#contact" class="btn btn-outline">{{ t.ctaVolunteer }}</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;photo2Caption&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Replantio espécies nativas com 4 anos&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Impact story&quot;}}">
+const TR = {
+  pt: {
+    brandSub: "Instituto de Meio Ambiente e Desenvolvimento",
+    nav: { home:"Início", about:"Sobre", images:"Imagens", videos:"Vídeos", reading:"Publicações", ecolinks:"Ecolinks", donate:"Doar", contact:"Contato" },
+    heroKicker: "ONG · OSCIP · desde 2002",
+    heroTitle: "Equilíbrio entre as pessoas e a natureza.",
+    heroLead: "Há mais de 20 anos promovemos o ecodesenvolvimento no Mato Grosso do Sul — unindo equidade social, viabilidade econômica e integridade ambiental.",
+    heroTag: "De pequenas coisas, grandes coisas crescem.",
+    ctaDonate: "Doar agora",
+    ctaVolunteer: "Quero ajudar · Voluntariar",
+    heroM1: "Fundado", heroM2: "Status legal", heroM3: "Onde atuamos",
+    heroImgAlt: "Vista aérea de floresta e água",
+    heroBadge: "Três setas, uma só direção: regenerar a vida.",
+    scroll: "Explore",
+    aboutKicker: "Quem somos",
+    aboutTitle: "Cuidar da terra é cuidar de quem vive nela.",
+    aboutP1: "O IMAD é uma organização da sociedade civil sem fins lucrativos, fundada em 2002 em Dourados-MS e qualificada como OSCIP. Trabalhamos lado a lado com comunidades, agricultores e povos indígenas Guarani-Kaiowá.",
+    aboutP2: "Nossa missão é simples e ambiciosa: reconciliar o desenvolvimento humano com a saúde dos ecossistemas, semeando agora as florestas e os modos de vida de amanhã.",
+    chip1: "Agroecologia", chip2: "Restauração ecológica", chip3: "Educação ambiental",
+    pillar1t: "Equidade social", pillar1d: "Renda, dignidade e protagonismo para as comunidades que cuidam do território.",
+    pillar2t: "Viabilidade econômica", pillar2d: "Modelos produtivos que sustentam famílias sem esgotar a natureza.",
+    pillar3t: "Integridade ambiental", pillar3d: "Solos vivos, nascentes limpas e biodiversidade que se regenera.",
+    progKicker: "O que fazemos",
+    progTitle: "Programas que unem floresta e comunidade.",
+    progLead: "Seis frentes de trabalho que se entrelaçam — do plantio das primeiras mudas à ação climática de longo prazo.",
+    prog1t: "Agroecologia & Agrofloresta", prog1d: "Sistemas agroflorestais que produzem alimento e recompõem o solo ao mesmo tempo.",
+    prog2t: "Restauração de áreas & nascentes", prog2d: "Recuperação de áreas degradadas e proteção das nascentes que abastecem a vida.",
+    prog3t: "Educação ambiental", prog3d: "Formação de crianças, jovens e lideranças para uma cultura de cuidado.",
+    prog4t: "Unidades de conservação & corredores", prog4d: "Apoio a áreas protegidas e corredores ecológicos que reconectam a paisagem.",
+    prog5t: "Apoio a povos indígenas", prog5d: "Parceria com comunidades Guarani-Kaiowá pela terra, cultura e autonomia.",
+    prog6t: "Ação climática", prog6d: "Sequestro de carbono e resiliência diante das mudanças do clima.",
+    impactKicker: "Impacto · História",
+    impactTitle: "Das cinzas, um mundo mais verde.",
+    impactTag: "Do fogo renasce uma floresta — e com ela, uma comunidade.",
+    impactP1: "Em 2021, um incêndio devastou terras de uma comunidade Guarani-Kaiowá. Onde restaram cinzas, começamos juntos a replantar.",
+    impactP2: "Mudas nativas, hortas agroecológicas e a reconstrução dos laços de quem vive da terra: a recuperação é lenta, viva e profundamente humana.",
+    baBefore: "Nascente em recuperação", baAfter: "Reconstrução em andamento", baBeforeAlt: "Nascente e área em recuperação", baAfterAlt: "Nova estrutura sendo construída na comunidade",
+    stat1: "Mudas plantadas", stat2: "Nascentes em recuperação", stat3: "Famílias apoiadas", stat4: "Anos de atuação",
+    imgKicker: "Imagens", imgTitle: "O trabalho em imagens.", imgLead: "Da semente à floresta, das mãos à comunidade. Um registro vivo do que cultivamos juntos.",
+    gal1:"Artesanato Guarani-Kaiowá", gal2:"Horta agroecológica", gal3:"Encontro comunitário", gal4:"Bijuteria Guarani-Kaiowá", gal5:"Produção de arcos e flechas", gal6:"Pinturas de rosto em crianças",
+    vidKicker: "Vídeos", vidTitle: "Histórias em movimento.", vidLead: "Documentários curtos e registros de campo sobre as pessoas e os territórios que cuidamos.",
+    vidEmpty: "Em breve: vídeos sobre o nosso trabalho de campo e as comunidades que apoiamos.",
+    readKicker: "Publicações & Leitura", readTitle: "Para conhecer mais a fundo.", readLead: "Dossiês, publicações e materiais para quem quer entender e apoiar o nosso trabalho.",
+    read1tag:"Dossiê", read1t:"Dossiê de atividades", read1d:"Um panorama completo dos projetos, parcerias e resultados do IMAD ao longo dos anos.",
+    read2tag:"Publicação", read2t:"Cartilhas & folhetos", read2d:"Materiais educativos sobre agroecologia, restauração e cuidado com as nascentes.",
+    read3tag:"Resumo", read3t:"Resumo institucional", read3d:"Quem somos, nossa missão e como atuamos — em poucas páginas.",
+    readMore:"Ler",
+    ecoKicker: "Ecolinks", ecoTitle: "Parceiros e recursos.", ecoLead: "Uma rede de organizações e fontes que caminham conosco pela regeneração.",
+    eco1t:"Rede de ONGs ambientais", eco1d:"Parceiros pela conservação no Cerrado e na Mata Atlântica",
+    eco2t:"Agroecologia Brasil", eco2d:"Conhecimento e redes de agricultura regenerativa",
+    eco3t:"Apoio a povos indígenas", eco3d:"Organizações aliadas dos Guarani-Kaiowá",
+    eco4t:"Restauração florestal", eco4d:"Iniciativas de recuperação de áreas degradadas",
+    donKicker: "Doe & faça parte", donTitle: "Sua doação vira floresta.", donLead: "Cada contribuição se transforma em mudas plantadas, nascentes protegidas e famílias fortalecidas. Apoie de forma única ou mensal.",
+    donReassure: "O IMAD é uma OSCIP sem fins lucrativos. Cada real é aplicado com transparência diretamente nos projetos de campo.",
+    kind1t:"Doação financeira", kind1d:"Pix, cartão ou transferência — único ou recorrente.",
+    kind2t:"Doação em espécie", kind2d:"Mudas, ferramentas, sementes e materiais.",
+    kind3t:"Seja voluntário(a)", kind3d:"Doe seu tempo e talento aos nossos projetos.",
+    dCardTitle:"Faça sua doação", dTabMoney:"Dinheiro", dTabKind:"Em espécie · Voluntariar",
+    dCustom:"Outro valor", dOnce:"Única", dMonthly:"Mensal", dGive:"Doar", dSecure:"Pagamento seguro · Pix, cartão ou boleto",
+    dKindBody:"Você também pode contribuir com mudas, ferramentas, sementes ou doando seu tempo. Toda ajuda planta o futuro.",
+    dKind1:"Mudas, sementes e insumos", dKind2:"Ferramentas e materiais", dKind3:"Trabalho voluntário",
+    dKindCta:"Fale conosco para doar",
+    conKicker:"Contato & Créditos", conTitle:"Vamos plantar algo juntos?", conLead:"Tem uma ideia, uma parceria ou quer apoiar? Escreva para nós — respondemos com carinho.",
+    conAddrL:"Endereço", conEmailL:"E-mail", conPhoneL:"Telefone · WhatsApp", conSocialL:"Redes sociais",
+    credits1:"Idealização e coordenação:", credits2:"Site desenvolvido com dedicação à causa socioambiental do IMAD.",
+    fName:"Nome", fNameP:"Seu nome", fEmail:"E-mail", fEmailP:"voce@email.com", fSubject:"Assunto", fSubjectP:"Como podemos ajudar?", fMsg:"Mensagem", fMsgP:"Escreva sua mensagem...", fSend:"Enviar mensagem", fSent:"Mensagem enviada ✓",
+    footStatement:"O IMAD é uma ONG e organização sem fins lucrativos registrada no Brasil, qualificada como OSCIP, com sede em Dourados, Mato Grosso do Sul.",
+    footNav:"Navegue", footGet:"Participe", footRights:"Todos os direitos reservados.", footMade:"Feito com cuidado pela vida.",
+    marqueeWords: ["Agroecologia","Agrofloresta","Restauração","Nascentes","Educação ambiental","Corredores ecológicos","Povos Guarani-Kaiowá","Ação climática"],
+  },
+  en: {
+    brandSub: "Institute for Environment and Development",
+    nav: { home:"Home", about:"About", images:"Images", videos:"Videos", reading:"Reading", ecolinks:"Ecolinks", donate:"Donate", contact:"Contact" },
+    heroKicker: "NGO · OSCIP · since 2002",
+    heroTitle: "Balance between people and nature.",
+    heroLead: "For over 20 years we've advanced ecodevelopment in Mato Grosso do Sul, Brazil — uniting social equity, economic viability and environmental integrity.",
+    heroTag: "From little things big things grow.",
+    ctaDonate: "Donate now",
+    ctaVolunteer: "Get involved · Volunteer",
+    heroM1: "Founded", heroM2: "Legal status", heroM3: "Where we work",
+    heroImgAlt: "Aerial view of forest and water",
+    heroBadge: "Three arrows, one direction: regenerating life.",
+    scroll: "Explore",
+    aboutKicker: "Who we are",
+    aboutTitle: "To care for the land is to care for those who live on it.",
+    aboutP1: "IMAD is a non-profit civil-society organization, founded in 2002 in Dourados-MS and qualified as an OSCIP. We work side by side with communities, farmers and the Guarani-Kaiowá indigenous people.",
+    aboutP2: "Our mission is simple and ambitious: to reconcile human development with the health of ecosystems — sowing today the forests and livelihoods of tomorrow.",
+    chip1: "Agroecology", chip2: "Ecological restoration", chip3: "Environmental education",
+    pillar1t: "Social equity", pillar1d: "Income, dignity and agency for the communities who care for the land.",
+    pillar2t: "Economic viability", pillar2d: "Productive models that sustain families without exhausting nature.",
+    pillar3t: "Environmental integrity", pillar3d: "Living soils, clean springs and biodiversity that regenerates itself.",
+    progKicker: "What we do",
+    progTitle: "Programs that unite forest and community.",
+    progLead: "Six interwoven fronts — from planting the first seedlings to long-term climate action.",
+    prog1t: "Agroecology & Agroforestry", prog1d: "Agroforestry systems that grow food and rebuild the soil at the same time.",
+    prog2t: "Restoring land & springs", prog2d: "Recovering degraded areas and protecting the springs that sustain life.",
+    prog3t: "Environmental education", prog3d: "Nurturing children, youth and leaders for a culture of care.",
+    prog4t: "Conservation units & corridors", prog4d: "Supporting protected areas and ecological corridors that reconnect the landscape.",
+    prog5t: "Support for indigenous peoples", prog5d: "Partnering with Guarani-Kaiowá communities for land, culture and autonomy.",
+    prog6t: "Climate action", prog6d: "Carbon sequestration and resilience in the face of a changing climate.",
+    impactKicker: "Impact · Story",
+    impactTitle: "From out of the ashes, a greener world.",
+    impactTag: "From fire a forest is reborn — and with it, a community.",
+    impactP1: "In 2021, a wildfire devastated the land of a Guarani-Kaiowá community. Where only ashes remained, we began replanting together.",
+    impactP2: "Native seedlings, agroecological gardens and the rebuilding of the bonds of those who live off the land: recovery is slow, alive and deeply human.",
+    baBefore: "Spring under recovery", baAfter: "Rebuilding underway", baBeforeAlt: "Spring and area in recovery", baAfterAlt: "New structure being built in the community",
+    stat1: "Seedlings planted", stat2: "Springs in recovery", stat3: "Families supported", stat4: "Years of action",
+    imgKicker: "Images", imgTitle: "The work, in pictures.", imgLead: "From seed to forest, from hands to community. A living record of what we grow together.",
+    gal1:"Guarani-Kaiowá craftwork", gal2:"Agroecological garden", gal3:"Community gathering", gal4:"Guarani-Kaiowá beadwork", gal5:"Making bows and arrows", gal6:"Face painting with children",
+    vidKicker: "Videos", vidTitle: "Stories in motion.", vidLead: "Short documentaries and field footage about the people and territories we care for.",
+    vidEmpty: "Coming soon: videos about our fieldwork and the communities we support.",
+    readKicker: "Reading & Publications", readTitle: "Go deeper.", readLead: "Dossiers, publications and materials for those who want to understand and support our work.",
+    read1tag:"Dossier", read1t:"Activities dossier", read1d:"A complete overview of IMAD's projects, partnerships and results over the years.",
+    read2tag:"Publication", read2t:"Booklets & folders", read2d:"Educational materials on agroecology, restoration and spring protection.",
+    read3tag:"Summary", read3t:"Institutional summary", read3d:"Who we are, our mission and how we work — in a few pages.",
+    readMore:"Read",
+    ecoKicker: "Ecolinks", ecoTitle: "Partners & resources.", ecoLead: "A network of organizations and sources walking with us toward regeneration.",
+    eco1t:"Environmental NGO network", eco1d:"Partners for conservation in the Cerrado and Atlantic Forest",
+    eco2t:"Agroecology Brazil", eco2d:"Knowledge and networks for regenerative agriculture",
+    eco3t:"Indigenous peoples support", eco3d:"Organizations allied with the Guarani-Kaiowá",
+    eco4t:"Forest restoration", eco4d:"Initiatives recovering degraded areas",
+    donKicker: "Donate & take part", donTitle: "Your gift becomes forest.", donLead: "Every contribution turns into seedlings planted, springs protected and families strengthened. Give once or monthly.",
+    donReassure: "IMAD is a non-profit OSCIP. Every cent is applied transparently and directly to field projects.",
+    kind1t:"Financial donation", kind1d:"Pix, card or transfer — one-time or recurring.",
+    kind2t:"In-kind donation", kind2d:"Seedlings, tools, seeds and materials.",
+    kind3t:"Become a volunteer", kind3d:"Give your time and talent to our projects.",
+    dCardTitle:"Make your donation", dTabMoney:"Money", dTabKind:"In-kind · Volunteer",
+    dCustom:"Other amount", dOnce:"One-time", dMonthly:"Monthly", dGive:"Donate", dSecure:"Secure payment · Pix, card or bank slip",
+    dKindBody:"You can also contribute with seedlings, tools, seeds — or by giving your time. Every bit plants the future.",
+    dKind1:"Seedlings, seeds & supplies", dKind2:"Tools & materials", dKind3:"Volunteer work",
+    dKindCta:"Contact us to donate",
+    conKicker:"Contact & Credits", conTitle:"Shall we plant something together?", conLead:"Have an idea, a partnership, or want to support us? Write to us — we reply with care.",
+    conAddrL:"Address", conEmailL:"Email", conPhoneL:"Phone · WhatsApp", conSocialL:"Social media",
+    credits1:"Conceived and coordinated by:", credits2:"Site built in dedication to IMAD's social-environmental cause.",
+    fName:"Name", fNameP:"Your name", fEmail:"Email", fEmailP:"you@email.com", fSubject:"Subject", fSubjectP:"How can we help?", fMsg:"Message", fMsgP:"Write your message...", fSend:"Send message", fSent:"Message sent ✓",
+    footStatement:"IMAD is a registered NGO and non-profit organisation in Brazil, qualified as an OSCIP, based in Dourados, Mato Grosso do Sul.",
+    footNav:"Explore", footGet:"Get involved", footRights:"All rights reserved.", footMade:"Made with care for life.",
+    marqueeWords: ["Agroecology","Agroforestry","Restoration","Springs","Environmental education","Ecological corridors","Guarani-Kaiowá peoples","Climate action"],
+  }
+};
+
+class Component extends DCLogic {
+  state = { lang:"pt", menuOpen:false, amount:50, custom:"", freq:"once", dmode:"money", sent:false };
+
+  componentDidMount(){ this._setup(); this._bindScroll(); }
+  componentDidUpdate(){ this._setup(); }
+
+  _bindScroll(){
+    if(this._bound) return; this._bound = true;
+    const hdr = document.querySelector("[data-hdr]");
+    const hero = document.querySelector(".hero-bg [data-parallax]");
+    const onScroll = ()=>{
+      const y = window.scrollY;
+      if(hdr) hdr.classList.toggle("stuck", y > 40);
+      if(hero) hero.style.transform = "translateY(" + (y * 0.18) + "px)";
+    };
+    window.addEventListener("scroll", onScroll, { passive:true }); onScroll();
+  }
+
+  _animateCounters(){
+    document.querySelectorAll(".cnt").forEach(el=>{
+      if(el.dataset.done) return; el.dataset.done = "1";
+      const to = parseInt(el.dataset.to,10) || 0; const dur = 1400; const start = performance.now();
+      const tick = (now)=>{
+        const p = Math.min((now-start)/dur, 1);
+        const e = 1 - Math.pow(1-p, 3);
+        el.textContent = Math.round(to * e).toLocaleString("pt-BR");
+        if(p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  _setup(){
+    if(this._io) this._io.disconnect();
+    this._io = new IntersectionObserver((es)=>{
+      es.forEach(e=>{ if(e.isIntersecting){
+        e.target.classList.add("in");
+        if(e.target.hasAttribute("data-stats")) this._animateCounters();
+        this._io.unobserve(e.target);
+      } });
+    }, { threshold:0.12, rootMargin:"0px 0px -6% 0px" });
+    const reveal = (el)=>{ el.classList.add("in"); if(el.hasAttribute("data-stats")) this._animateCounters(); };
+    const all = ()=> document.querySelectorAll(".rv, [data-stats]");
+    requestAnimationFrame(()=>{
+      all().forEach(el=>{
+        if(el.classList.contains("in")) return;
+        const r = el.getBoundingClientRect();
+        if(r.top < (window.innerHeight || 900) * 0.94) { reveal(el); return; }
+        this._io.observe(el);
+      });
+    });
+    clearTimeout(this._fallback);
+    this._fallback = setTimeout(()=> all().forEach(reveal), 800);
+    if(!this._scroll){
+      this._scroll = ()=>{ all().forEach(el=>{ if(!el.classList.contains("in") && el.getBoundingClientRect().top < (window.innerHeight||900)*0.94) reveal(el); }); };
+      window.addEventListener("scroll", this._scroll, { passive:true });
+    }
+  }
+
+  _heroWords(){
+    const words = TR[this.state.lang].heroTitle.split(" ");
+    return React.createElement(React.Fragment, null, words.map((w,i)=>
+      React.createElement("span", { className:"w", key:i },
+        React.createElement("span", { style:{ animationDelay:(0.15 + i*0.08)+"s" } }, w),
+        i < words.length-1 ? " " : ""
+      )
+    ));
+  }
+
+  _marquee(){
+    const words = TR[this.state.lang].marqueeWords;
+    const triad = React.createElement("svg", { className:"sep", viewBox:"0 0 20 18", fill:"currentColor", key:"s" },
+      React.createElement("path", { d:"M10 0l3.4 6H6.6L10 0zM3.4 12L6.8 6 10 12H3.4zm13.2 0H10l3.2-6 3.4 6z" }));
+    const seq = [];
+    const build = (keyPrefix)=> words.forEach((w,i)=>{ seq.push(React.createElement("span", { key:keyPrefix+i }, w, React.cloneElement(triad, { key:keyPrefix+"t"+i }))); });
+    build("a"); build("b");
+    return React.createElement(React.Fragment, null, seq);
+  }
+
+  renderVals(){
+    const t = TR[this.state.lang];
+    const L = this.state.lang;
+    return {
+      t, year: 2026,
+      heroWords: this._heroWords(),
+      marquee: this._marquee(),
+      photo2Caption: this.props.photo2Caption ?? "Replantio espécies nativas com 4 anos",
+      ptClass: L==="pt" ? "on" : "",
+      enClass: L==="en" ? "on" : "",
+      setPt: ()=> this.setState({lang:"pt"}),
+      setEn: ()=> this.setState({lang:"en"}),
+      menuOpen: this.state.menuOpen,
+      sheetClass: this.state.menuOpen ? "sheet open" : "sheet",
+      toggleMenu: ()=> this.setState(s=>({menuOpen:!s.menuOpen})),
+      closeMenu: ()=> this.setState({menuOpen:false}),
+      a25: this.state.amount===25 ? "amt on" : "amt",
+      a50: this.state.amount===50 ? "amt on" : "amt",
+      a100: this.state.amount===100 ? "amt on" : "amt",
+      pick25: ()=> this.setState({amount:25, custom:""}),
+      pick50: ()=> this.setState({amount:50, custom:""}),
+      pick100: ()=> this.setState({amount:100, custom:""}),
+      pickCustom: ()=> this.setState({amount:0}),
+      customVal: this.state.custom,
+      onCustom: (e)=> this.setState({custom:e.target.value, amount:0}),
+      giveLabel: this.state.custom ? ("R$"+this.state.custom) : (this.state.amount ? ("R$"+this.state.amount) : ""),
+      fOnce: this.state.freq==="once" ? "on" : "",
+      fMonthly: this.state.freq==="monthly" ? "on" : "",
+      setOnce: ()=> this.setState({freq:"once"}),
+      setMonthly: ()=> this.setState({freq:"monthly"}),
+      moneyTab: this.state.dmode==="money" ? "dtab on" : "dtab",
+      kindTab: this.state.dmode==="kind" ? "dtab on" : "dtab",
+      setMoney: ()=> this.setState({dmode:"money"}),
+      setKind: ()=> this.setState({dmode:"kind"}),
+      moneyShow: this.state.dmode==="money" ? "" : "hidden-pane",
+      kindShow: this.state.dmode==="kind" ? "" : "hidden-pane",
+      onSubmit: (e)=>{ e.preventDefault(); this.setState({sent:true}); },
+      sendLabel: this.state.sent ? t.fSent : t.fSend,
+    };
+  }
+}
+</script>
+</body>
+</html>

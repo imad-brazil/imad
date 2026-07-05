@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F4; --paper:#FFFFFF; --leaf:#2EC24A; --leaf-soft:#5FD074;
+    --leaf-deep:#15803D; --leaf-deeper:#0F6B30; --forest:#123D26;
+    --ink:#36473C; --muted:#6E7E72; --blue:#2B7FB0; --blue-deep:#1F5E84;
+    --sand:#C9A66B; --sand-bg:#F4EEE1; --line:#E7E3D6; --leaf-bg:#EAF7EC;
+    --shadow:0 1px 2px rgba(18,61,38,.04),0 8px 30px rgba(18,61,38,.06);
+    --shadow-lg:0 12px 40px rgba(18,61,38,.12);
+    --r:18px; --rs:12px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:88px; -webkit-text-size-adjust:100%}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Manrope',system-ui,sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  img{max-width:100%; display:block}
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3,h4{color:var(--forest); margin:0; line-height:1.12; letter-spacing:-.02em; font-weight:800}
+  p{margin:0}
+  ::selection{background:var(--leaf); color:#fff}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px}
+  .serif{font-family:'Newsreader',Georgia,serif; font-style:italic; font-weight:400; letter-spacing:0}
+
+  /* reveal */
+  [data-reveal]{opacity:0; transform:translateY(26px); transition:opacity .8s cubic-bezier(.16,.84,.44,1), transform .8s cubic-bezier(.16,.84,.44,1)}
+  [data-reveal].in{opacity:1; transform:none}
+  .hidden-pane{display:none}
+  @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important; transform:none!important; transition:none}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @keyframes spin-slow{to{transform:rotate(360deg)}}
+
+  /* header */
+  .hdr{position:sticky; top:0; z-index:50; background:rgba(250,249,244,.82);
+    backdrop-filter:saturate(1.4) blur(14px); -webkit-backdrop-filter:saturate(1.4) blur(14px);
+    border-bottom:1px solid var(--line)}
+  .hdr-in{display:flex; align-items:center; gap:20px; height:72px}
+  .brand{display:flex; align-items:center; gap:11px; margin-right:auto}
+  .brand img{height:38px; width:auto}
+  .brand .bt{font-weight:800; font-size:21px; color:var(--forest); letter-spacing:.04em; line-height:1}
+  .brand .bs{font-size:11px; color:var(--muted); letter-spacing:.01em; line-height:1.25; margin-top:2px; max-width:230px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block}
+  .nav{display:flex; align-items:center; gap:4px}
+  .nav a{padding:8px 12px; border-radius:9px; font-weight:600; font-size:14.5px; color:var(--ink); transition:color .18s, background .18s; white-space:nowrap}
+  .nav a:hover{color:var(--leaf-deeper); background:var(--leaf-bg)}
+  .btn{display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit;
+    font-weight:700; border-radius:999px; transition:transform .15s, box-shadow .2s, background .2s; white-space:nowrap}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--leaf-deep); color:#fff; padding:11px 22px; font-size:15px; box-shadow:0 6px 18px rgba(21,128,61,.28)}
+  .btn-primary:hover{background:var(--leaf-deeper); box-shadow:0 10px 26px rgba(21,128,61,.34)}
+  .btn-ghost{background:var(--paper); color:var(--forest); padding:11px 22px; font-size:15px; border:1.5px solid var(--line); box-shadow:var(--shadow)}
+  .btn-ghost:hover{border-color:var(--leaf); color:var(--leaf-deeper)}
+  .btn-lg{padding:15px 30px; font-size:16.5px}
+  .nav-donate{padding:9px 18px; font-size:14.5px}
+  .lang{display:inline-flex; align-items:center; background:var(--paper); border:1.5px solid var(--line); border-radius:999px; padding:3px; box-shadow:var(--shadow)}
+  .lang button{border:none; background:transparent; cursor:pointer; font-family:inherit; font-weight:700; font-size:12.5px;
+    color:var(--muted); padding:5px 11px; border-radius:999px; letter-spacing:.04em; transition:all .18s}
+  .lang button.on{background:var(--forest); color:#fff}
+  .ham{display:none; flex-direction:column; gap:5px; width:44px; height:44px; align-items:center; justify-content:center;
+    background:var(--paper); border:1.5px solid var(--line); border-radius:12px; cursor:pointer; box-shadow:var(--shadow)}
+  .ham span{width:20px; height:2px; background:var(--forest); border-radius:2px; transition:.25s}
+
+  /* mobile sheet */
+  .sheet{position:fixed; inset:0; z-index:60; display:none}
+  .sheet.open{display:block}
+  .sheet-bg{position:absolute; inset:0; background:rgba(18,61,38,.32); backdrop-filter:blur(2px); animation:fade .25s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet-panel{position:absolute; top:0; right:0; bottom:0; width:min(86vw,360px); background:var(--bg);
+    box-shadow:-20px 0 60px rgba(18,61,38,.2); padding:22px; display:flex; flex-direction:column; gap:6px;
+    animation:slideIn .3s cubic-bezier(.16,.84,.44,1); overflow-y:auto}
+  @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+  .sheet-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+  .sheet-panel a{padding:14px 14px; border-radius:12px; font-weight:700; font-size:17px; color:var(--forest); transition:background .15s}
+  .sheet-panel a:hover{background:var(--leaf-bg)}
+  .x{width:42px; height:42px; border-radius:12px; border:1.5px solid var(--line); background:var(--paper); cursor:pointer; font-size:20px; color:var(--forest); display:grid; place-items:center}
+
+  /* sections */
+  section{position:relative}
+  .sec{padding:108px 0}
+  .sec-sm{padding:84px 0}
+  .kicker{display:inline-flex; align-items:center; gap:9px; font-weight:700; font-size:13px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--leaf-deep)}
+  .triad-mini{width:18px; height:16px; flex:none}
+  .h-sec{font-size:clamp(30px,4.6vw,46px); margin:16px 0 0; max-width:18ch; text-wrap:balance}
+  .lead{font-size:clamp(17px,2vw,19.5px); color:var(--muted); margin-top:18px; max-width:60ch; line-height:1.7}
+
+  /* hero */
+  .hero{padding:64px 0 84px; background:
+    radial-gradient(1100px 520px at 88% -8%, rgba(46,194,74,.10), transparent 60%),
+    radial-gradient(800px 480px at -6% 18%, rgba(43,127,176,.07), transparent 55%)}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center}
+  .hero h1{font-size:clamp(38px,5.6vw,62px); line-height:1.04; margin-top:22px; text-wrap:balance}
+  .hero .lead{margin-top:22px; max-width:46ch}
+  .hero-tag{margin-top:26px; font-size:clamp(20px,2.6vw,26px); color:var(--leaf-deep); line-height:1.4; max-width:24ch}
+  .hero-cta{display:flex; gap:14px; flex-wrap:wrap; margin-top:34px}
+  .hero-meta{display:flex; gap:26px; flex-wrap:wrap; margin-top:40px; padding-top:30px; border-top:1px solid var(--line)}
+  .hero-meta .n{font-size:30px; font-weight:800; color:var(--forest); letter-spacing:-.02em}
+  .hero-meta .l{font-size:13px; color:var(--muted); font-weight:600; margin-top:2px}
+  .hero-art{position:relative}
+  .hero-art .frame{border-radius:26px; overflow:hidden; box-shadow:var(--shadow-lg); aspect-ratio:4/4.6; background:var(--leaf-bg)}
+  .hero-art .frame img{width:100%; height:100%; object-fit:cover}
+  .hero-badge{position:absolute; left:-26px; bottom:34px; background:var(--paper); border-radius:18px; padding:16px 20px;
+    box-shadow:var(--shadow-lg); display:flex; align-items:center; gap:13px; max-width:240px}
+  .hero-badge img{height:40px; width:auto; animation:floaty 5s ease-in-out infinite}
+  .hero-badge .t{font-size:13px; color:var(--ink); font-weight:600; line-height:1.4}
+  .hero-logo{position:absolute; right:-18px; top:-26px; height:96px; width:auto; opacity:.96; filter:drop-shadow(0 10px 24px rgba(18,61,38,.18)); animation:floaty 6s ease-in-out infinite}
+
+  /* about / pillars */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center}
+  .about-img{border-radius:24px; overflow:hidden; box-shadow:var(--shadow-lg); aspect-ratio:5/4}
+  .about-img img{width:100%; height:100%; object-fit:cover}
+  .chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
+  .chip{display:inline-flex; align-items:center; gap:7px; background:var(--paper); border:1px solid var(--line);
+    border-radius:999px; padding:8px 15px; font-size:13.5px; font-weight:600; color:var(--forest); box-shadow:var(--shadow)}
+  .chip .dot{width:7px; height:7px; border-radius:50%; background:var(--leaf)}
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:64px}
+  .pillar{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:30px 26px; box-shadow:var(--shadow);
+    transition:transform .25s, box-shadow .25s; position:relative; overflow:hidden}
+  .pillar:hover{transform:translateY(-5px); box-shadow:var(--shadow-lg)}
+  .pillar .pico{width:52px; height:52px; border-radius:14px; display:grid; place-items:center; margin-bottom:18px}
+  .pillar h3{font-size:20px; margin-bottom:9px}
+  .pillar p{font-size:15px; color:var(--muted); line-height:1.6}
+  .pillar .edge{position:absolute; left:0; top:0; bottom:0; width:4px}
+
+  /* programs */
+  .prog-band{background:linear-gradient(180deg, #F1F6EE, var(--bg))}
+  .prog-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:54px}
+  .prog{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:30px 26px 28px; box-shadow:var(--shadow);
+    transition:transform .25s, box-shadow .25s, border-color .25s}
+  .prog:hover{transform:translateY(-5px); box-shadow:var(--shadow-lg); border-color:#cfe6cf}
+  .prog .ico{width:54px; height:54px; border-radius:15px; background:var(--leaf-bg); color:var(--leaf-deep); display:grid; place-items:center; margin-bottom:20px; transition:background .25s, transform .25s}
+  .prog:hover .ico{background:var(--leaf-deep); color:#fff; transform:rotate(-6deg)}
+  .prog h3{font-size:19px; margin-bottom:8px}
+  .prog p{font-size:14.5px; color:var(--muted); line-height:1.6}
+  .prog .num{font-family:'Newsreader',serif; font-style:italic; color:var(--leaf-soft); font-size:15px; font-weight:500}
+
+  /* impact */
+  .impact{background:var(--forest); color:#EAF3EC; overflow:hidden}
+  .impact h2,.impact h3{color:#fff}
+  .impact .kicker{color:var(--leaf-soft)}
+  .impact .lead{color:rgba(234,243,236,.82)}
+  .impact-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center}
+  .ba{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .ba figure{margin:0; border-radius:18px; overflow:hidden; position:relative; box-shadow:0 20px 50px rgba(0,0,0,.3); aspect-ratio:3/4}
+  .ba img{width:100%; height:100%; object-fit:cover}
+  .ba figcaption{position:absolute; left:12px; top:12px; background:rgba(18,61,38,.7); color:#fff; font-size:11.5px; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border-radius:999px; backdrop-filter:blur(4px)}
+  .ba figure:last-child figcaption{background:var(--leaf-deep)}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:72px; padding-top:48px; border-top:1px solid rgba(255,255,255,.14)}
+  .stat .n{font-size:clamp(34px,4.4vw,46px); font-weight:800; color:#fff; letter-spacing:-.02em; line-height:1}
+  .stat .n span{color:var(--leaf-soft)}
+  .stat .l{font-size:14px; color:rgba(234,243,236,.7); margin-top:8px; font-weight:600}
+
+  /* gallery */
+  .gal{display:grid; grid-template-columns:repeat(6,1fr); grid-auto-rows:200px; gap:14px; margin-top:48px}
+  .gal figure{margin:0; border-radius:16px; overflow:hidden; position:relative; box-shadow:var(--shadow); cursor:pointer}
+  .gal figure img{width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.16,.84,.44,1)}
+  .gal figure:hover img{transform:scale(1.07)}
+  .gal figure::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 45%,rgba(18,61,38,.55)); opacity:0; transition:opacity .3s}
+  .gal figure:hover::after{opacity:1}
+  .gal figcaption{position:absolute; left:16px; right:16px; bottom:14px; color:#fff; font-weight:700; font-size:14px; z-index:2; opacity:0; transform:translateY(8px); transition:.3s}
+  .gal figure:hover figcaption{opacity:1; transform:none}
+  .g-a{grid-column:span 2; grid-row:span 2}
+  .g-b{grid-column:span 2}
+  .g-c{grid-column:span 2}
+  .g-d{grid-column:span 2}
+  .g-e{grid-column:span 2}
+  .g-f{grid-column:span 2}
+
+  /* videos */
+  .vid-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:48px}
+  .vid-empty{margin-top:48px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px; padding:64px 24px; background:var(--paper); border:1.5px dashed var(--line); border-radius:var(--r)}
+  .vid-empty-ico{width:64px; height:64px; border-radius:16px; background:var(--leaf-bg); color:var(--leaf-deep); display:grid; place-items:center}
+  .vid-empty p{font-size:15.5px; color:var(--muted); max-width:36ch}
+  .vid{border-radius:var(--r); overflow:hidden; background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow); transition:transform .25s, box-shadow .25s}
+  .vid:hover{transform:translateY(-5px); box-shadow:var(--shadow-lg)}
+  .vid .thumb{position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--leaf-bg)}
+  .vid .thumb img{width:100%; height:100%; object-fit:cover; transition:transform .5s}
+  .vid:hover .thumb img{transform:scale(1.05)}
+  .vid .play{position:absolute; inset:0; display:grid; place-items:center}
+  .vid .play span{width:62px; height:62px; border-radius:50%; background:rgba(255,255,255,.92); display:grid; place-items:center; box-shadow:var(--shadow-lg); transition:transform .25s, background .25s}
+  .vid:hover .play span{transform:scale(1.08); background:#fff}
+  .vid .play svg{margin-left:3px; color:var(--leaf-deep)}
+  .vid .vmeta{padding:20px 22px}
+  .vid h3{font-size:17px; margin-bottom:5px}
+  .vid p{font-size:13.5px; color:var(--muted)}
+
+  /* reading */
+  .read-band{background:var(--sand-bg)}
+  .read-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:48px}
+  .read{display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:30px 28px; box-shadow:var(--shadow); transition:transform .25s, box-shadow .25s}
+  .read:hover{transform:translateY(-5px); box-shadow:var(--shadow-lg)}
+  .read .rico{width:50px; height:50px; border-radius:13px; background:var(--sand-bg); color:var(--sand); display:grid; place-items:center; margin-bottom:18px; border:1px solid #e7dcc5}
+  .read .tag{font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--blue-deep)}
+  .read h3{font-size:18.5px; margin:8px 0 8px}
+  .read p{font-size:14.5px; color:var(--muted); flex:1; line-height:1.6}
+  .read .more{margin-top:20px; font-weight:700; font-size:14px; color:var(--leaf-deep); display:inline-flex; align-items:center; gap:7px; transition:gap .2s}
+  .read:hover .more{gap:11px}
+
+  /* ecolinks */
+  .eco-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:48px}
+  .eco{display:flex; align-items:center; gap:18px; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); transition:transform .2s, box-shadow .2s, border-color .2s}
+  .eco:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg); border-color:#cfe6cf}
+  .eco .ei{width:46px; height:46px; border-radius:12px; background:var(--leaf-bg); color:var(--leaf-deep); display:grid; place-items:center; flex:none}
+  .eco .et{font-weight:700; color:var(--forest); font-size:16px}
+  .eco .ed{font-size:13.5px; color:var(--muted); margin-top:1px}
+  .eco .arr{margin-left:auto; color:var(--muted); transition:transform .2s, color .2s; flex:none}
+  .eco:hover .arr{transform:translate(3px,-3px); color:var(--leaf-deep)}
+
+  /* donate */
+  .donate{background:linear-gradient(165deg,#0F3D24,#16572F 60%,#1C6A38); color:#fff; overflow:hidden; position:relative}
+  .donate h2,.donate h3{color:#fff}
+  .donate .deco{position:absolute; opacity:.07; pointer-events:none}
+  .donate-grid{display:grid; grid-template-columns:1.02fr 1fr; gap:56px; align-items:center; position:relative; z-index:2}
+  .donate .kicker{color:var(--leaf-soft)}
+  .donate h2{font-size:clamp(30px,4.4vw,44px); margin-top:14px; text-wrap:balance}
+  .donate .lead{color:rgba(255,255,255,.85); margin-top:18px}
+  .reassure{display:flex; gap:12px; align-items:flex-start; margin-top:26px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:16px 18px}
+  .reassure svg{flex:none; color:var(--leaf-soft); margin-top:2px}
+  .reassure p{font-size:14.5px; color:rgba(255,255,255,.9); line-height:1.55}
+  .dcard{background:var(--paper); border-radius:24px; padding:34px; box-shadow:var(--shadow-lg); color:var(--ink)}
+  .dcard h3{color:var(--forest); font-size:21px}
+  .dtabs{display:flex; gap:8px; background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:5px; margin:18px 0 22px}
+  .dtab{flex:1; border:none; background:transparent; font-family:inherit; font-weight:700; font-size:14px; color:var(--muted); padding:10px; border-radius:10px; cursor:pointer; transition:.18s}
+  .dtab.on{background:var(--paper); color:var(--forest); box-shadow:var(--shadow)}
+  .amts{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .amt{padding:17px 6px; border-radius:13px; border:1.6px solid var(--line); background:var(--paper); font-family:inherit; font-weight:700; font-size:18px; color:var(--forest); cursor:pointer; transition:.18s}
+  .amt:hover{border-color:var(--leaf)}
+  .amt.on{border-color:var(--leaf-deep); background:var(--leaf-bg); color:var(--leaf-deeper); box-shadow:0 6px 16px rgba(21,128,61,.16)}
+  .custom{margin-top:10px; display:flex; align-items:center; gap:10px; border:1.6px solid var(--line); border-radius:13px; padding:0 16px; transition:border-color .18s}
+  .custom:focus-within{border-color:var(--leaf-deep)}
+  .custom span{font-weight:800; color:var(--muted); font-size:16px}
+  .custom input{flex:1; border:none; outline:none; font-family:inherit; font-weight:700; font-size:17px; color:var(--forest); padding:16px 0; background:transparent}
+  .freq{display:flex; gap:8px; margin-top:14px}
+  .freq button{flex:1; border:1.4px solid var(--line); background:var(--paper); font-family:inherit; font-weight:600; font-size:13.5px; color:var(--muted); padding:9px; border-radius:10px; cursor:pointer; transition:.18s}
+  .freq button.on{border-color:var(--leaf-deep); color:var(--leaf-deeper); background:var(--leaf-bg)}
+  .dcard .btn-primary{width:100%; justify-content:center; margin-top:20px; padding:16px}
+  .kind-list{display:flex; flex-direction:column; gap:12px}
+  .kind{display:flex; gap:14px; align-items:flex-start; padding:14px; border-radius:13px; border:1px solid var(--line); transition:.18s}
+  .kind:hover{border-color:var(--leaf); background:#FCFEFC}
+  .kind .ki{width:40px; height:40px; border-radius:11px; background:var(--leaf-bg); color:var(--leaf-deep); display:grid; place-items:center; flex:none}
+  .kind .kt{font-weight:700; color:var(--forest); font-size:15.5px}
+  .kind .kd{font-size:13.5px; color:var(--muted); margin-top:2px}
+
+  /* contact */
+  .contact-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:56px}
+  .cinfo{display:flex; flex-direction:column; gap:6px}
+  .crow{display:flex; gap:16px; align-items:flex-start; padding:18px 0; border-bottom:1px solid var(--line)}
+  .crow .ci{width:46px; height:46px; border-radius:12px; background:var(--leaf-bg); color:var(--leaf-deep); display:grid; place-items:center; flex:none}
+  .crow .cl{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+  .crow .cv{font-weight:700; color:var(--forest); font-size:16.5px; margin-top:2px}
+  .crow a.cv:hover{color:var(--leaf-deep)}
+  .form{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:32px; box-shadow:var(--shadow)}
+  .frow{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .field{margin-bottom:14px}
+  .field label{display:block; font-size:13px; font-weight:700; color:var(--forest); margin-bottom:7px}
+  .field input,.field textarea{width:100%; border:1.5px solid var(--line); border-radius:12px; padding:13px 15px; font-family:inherit; font-size:15px; color:var(--ink); background:var(--bg); transition:border-color .18s, background .18s; resize:vertical}
+  .field input:focus,.field textarea:focus{outline:none; border-color:var(--leaf-deep); background:var(--paper)}
+  .form .btn-primary{width:100%; justify-content:center; padding:15px; margin-top:4px}
+  .credits{margin-top:26px; font-size:13.5px; color:var(--muted); line-height:1.7}
+  .credits b{color:var(--forest)}
+
+  /* footer */
+  footer{background:var(--forest); color:rgba(234,243,236,.72); padding:0}
+  .foot-img{height:200px; overflow:hidden; position:relative}
+  .foot-img img{width:100%; height:100%; object-fit:cover; opacity:.5}
+  .foot-img::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent,var(--forest))}
+  .foot-main{padding:64px 0 40px}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:48px}
+  .foot-brand img{height:54px; width:auto; margin-bottom:16px}
+  .foot-brand p{font-size:14.5px; line-height:1.7; max-width:38ch}
+  .foot-col h4{color:#fff; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:16px}
+  .foot-col a{display:block; padding:5px 0; font-size:14.5px; color:rgba(234,243,236,.72); transition:color .15s}
+  .foot-col a:hover{color:var(--leaf-soft)}
+  .socials{display:flex; gap:10px; margin-top:18px}
+  .socials a{width:42px; height:42px; border-radius:12px; border:1px solid rgba(255,255,255,.16); display:grid; place-items:center; color:#fff; transition:.2s}
+  .socials a:hover{background:var(--leaf-deep); border-color:var(--leaf-deep); transform:translateY(-3px)}
+  .foot-bot{border-top:1px solid rgba(255,255,255,.12); padding:24px 0; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:13.5px}
+
+  /* responsive */
+  @media (max-width:1080px){
+    .hero-grid{gap:40px}
+    .gal{grid-template-columns:repeat(4,1fr)}
+    .g-a{grid-column:span 2; grid-row:span 2}
+    .g-b,.g-c,.g-d,.g-e,.g-f{grid-column:span 2}
+  }
+  @media (max-width:920px){
+    .nav, .hdr .lang.desk{display:none}
+    .ham{display:flex}
+    .sec{padding:80px 0} .hero{padding:48px 0 64px}
+    .hero-grid,.about-grid,.impact-grid,.donate-grid,.contact-grid{grid-template-columns:1fr; gap:40px}
+    .hero-art{order:-1; max-width:440px}
+    .hero-logo{height:72px; right:8px; top:-14px}
+    .pillars,.prog-grid,.vid-grid,.read-grid{grid-template-columns:1fr 1fr}
+    .stats{grid-template-columns:repeat(2,1fr); gap:32px 20px}
+    .brand .bs{display:none}
+  }
+  @media (max-width:600px){
+    body{font-size:16px}
+    .wrap{padding:0 18px}
+    .sec{padding:64px 0} .sec-sm{padding:56px 0}
+    .pillars,.prog-grid,.vid-grid,.read-grid,.eco-grid,.amts{grid-template-columns:1fr}
+    .amts{grid-template-columns:repeat(3,1fr)}
+    .frow{grid-template-columns:1fr}
+    .gal{grid-template-columns:repeat(2,1fr); grid-auto-rows:150px}
+    .g-a{grid-column:span 2; grid-row:span 1}
+    .g-b,.g-c,.g-d,.g-e,.g-f{grid-column:span 1}
+    .foot-grid{grid-template-columns:1fr; gap:36px}
+    .hero-badge{left:0}
+    .hero .hero-cta .btn{flex:1; justify-content:center}
+    .dcard{padding:24px}
+    .form{padding:24px}
+  }
+</style>
+</helmet>
+
+<div>
+  <!-- ===== HEADER ===== -->
+  <header class="hdr">
+    <div class="wrap hdr-in">
+      <a href="#home" class="brand" onClick="{{ closeMenu }}">
+        <img src="assets/imad-logo-transparent.png" alt="IMAD">
+        <span>
+          <span class="bt" style="display:block">IMAD</span>
+          <span class="bs">{{ t.brandSub }}</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#home">{{ t.nav.home }}</a>
+        <a href="#about">{{ t.nav.about }}</a>
+        <a href="#images">{{ t.nav.images }}</a>
+        <a href="#videos">{{ t.nav.videos }}</a>
+        <a href="#reading">{{ t.nav.reading }}</a>
+        <a href="#ecolinks">{{ t.nav.ecolinks }}</a>
+        <a href="#contact">{{ t.nav.contact }}</a>
+      </nav>
+      <div class="lang desk">
+        <button class="{{ ptClass }}" onClick="{{ setPt }}">PT</button>
+        <button class="{{ enClass }}" onClick="{{ setEn }}">EN</button>
+      </div>
+      <a href="#donate" class="btn btn-primary nav-donate">{{ t.nav.donate }}</a>
+      <button class="ham" onClick="{{ toggleMenu }}" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- mobile sheet -->
+  <div class="{{ sheetClass }}">
+    <div class="sheet-bg" onClick="{{ closeMenu }}"></div>
+    <div class="sheet-panel">
+      <div class="sheet-top">
+        <div class="lang">
+          <button class="{{ ptClass }}" onClick="{{ setPt }}">PT</button>
+          <button class="{{ enClass }}" onClick="{{ setEn }}">EN</button>
+        </div>
+        <button class="x" onClick="{{ closeMenu }}" aria-label="Close">×</button>
+      </div>
+      <a href="#home" onClick="{{ closeMenu }}">{{ t.nav.home }}</a>
+      <a href="#about" onClick="{{ closeMenu }}">{{ t.nav.about }}</a>
+      <a href="#images" onClick="{{ closeMenu }}">{{ t.nav.images }}</a>
+      <a href="#videos" onClick="{{ closeMenu }}">{{ t.nav.videos }}</a>
+      <a href="#reading" onClick="{{ closeMenu }}">{{ t.nav.reading }}</a>
+      <a href="#ecolinks" onClick="{{ closeMenu }}">{{ t.nav.ecolinks }}</a>
+      <a href="#contact" onClick="{{ closeMenu }}">{{ t.nav.contact }}</a>
+      <a href="#donate" class="btn btn-primary btn-lg" style="justify-content:center; margin-top:12px" onClick="{{ closeMenu }}">{{ t.nav.donate }}</a>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" class="hero">
+    <div class="wrap hero-grid">
+      <div data-reveal="">
+        <span class="kicker">{{ t.heroKicker }}</span>
+        <h1>{{ t.heroTitle }}</h1>
+        <p class="lead">{{ t.heroLead }}</p>
+        <p class="serif hero-tag">“{{ t.heroTag }}”</p>
+        <div class="hero-cta">
+          <a href="#donate" class="btn btn-primary btn-lg">{{ t.ctaDonate }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+          </a>
+          <a href="#contact" class="btn btn-ghost btn-lg">{{ t.ctaVolunteer }}</a>
+        </div>
+        <div class="hero-meta">
+          <div><div class="n">2002</div><div class="l">{{ t.heroM1 }}</div></div>
+          <div><div class="n">OSCIP</div><div class="l">{{ t.heroM2 }}</div></div>
+          <div><div class="n">Dourados·MS</div><div class="l">{{ t.heroM3 }}</div></div>
+        </div>
+      </div>
+      <div class="hero-art" data-reveal="">
+        <img class="hero-logo" src="assets/imad-symbol.png" alt="">
+        <div class="frame"><img src="assets/img/hero.jpg" alt="{{ t.heroImgAlt }}"></div>
+        <div class="hero-badge">
+          <img src="assets/imad-symbol.png" alt="">
+          <span class="t">{{ t.heroBadge }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="sec">
+    <div class="wrap">
+      <div class="about-grid">
+        <div class="about-img" data-reveal=""><img src="assets/img/about.jpg" alt="{{ t.aboutImgAlt }}"></div>
+        <div data-reveal="">
+          <span class="kicker"><svg class="triad-mini" viewBox="0 0 20 18" fill="currentColor"><path d="M10 0l3.4 6H6.6L10 0zM3.4 12L6.8 6 10 12H3.4zm13.2 0H10l3.2-6 3.4 6z"></path></svg>{{ t.aboutKicker }}</span>
+          <h2 class="h-sec">{{ t.aboutTitle }}</h2>
+          <p class="lead">{{ t.aboutP1 }}</p>
+          <p class="lead" style="margin-top:14px">{{ t.aboutP2 }}</p>
+          <div class="chips">
+            <span class="chip"><span class="dot"></span>{{ t.chip1 }}</span>
+            <span class="chip"><span class="dot"></span>{{ t.chip2 }}</span>
+            <span class="chip"><span class="dot"></span>{{ t.chip3 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar" data-reveal="">
+          <span class="edge" style="background:var(--leaf)"></span>
+          <div class="pico" style="background:var(--leaf-bg); color:var(--leaf-deep)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"></circle><path d="M3 21v-1a5 5 0 0 1 5-5h2"></path><circle cx="17" cy="10" r="2.5"></circle><path d="M21 21v-.5a4 4 0 0 0-4-4h-1"></path></svg>
+          </div>
+          <h3>{{ t.pillar1t }}</h3>
+          <p>{{ t.pillar1d }}</p>
+        </div>
+        <div class="pillar" data-reveal="">
+          <span class="edge" style="background:var(--blue)"></span>
+          <div class="pico" style="background:#E7F1F7; color:var(--blue-deep)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M5 7c2 0 4 1 7 1s5-1 7-1M5 7v6c0 2 3 3 7 3s7-1 7-3V7"></path></svg>
+          </div>
+          <h3>{{ t.pillar2t }}</h3>
+          <p>{{ t.pillar2d }}</p>
+        </div>
+        <div class="pillar" data-reveal="">
+          <span class="edge" style="background:var(--sand)"></span>
+          <div class="pico" style="background:var(--sand-bg); color:#A9842F">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"></path></svg>
+          </div>
+          <h3>{{ t.pillar3t }}</h3>
+          <p>{{ t.pillar3d }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROGRAMS ===== -->
+  <section id="programs" class="sec prog-band">
+    <div class="wrap">
+      <div data-reveal="" style="text-align:center">
+        <span class="kicker" style="justify-content:center">{{ t.progKicker }}</span>
+        <h2 class="h-sec" style="margin-left:auto; margin-right:auto; max-width:22ch">{{ t.progTitle }}</h2>
+        <p class="lead" style="margin-left:auto; margin-right:auto; text-align:center">{{ t.progLead }}</p>
+      </div>
+      <div class="prog-grid">
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 8 9 5 4 5c0 4 3 7 8 7zM12 12c0-4 3-7 8-7 0 4-3 7-8 7z"></path></svg></div>
+          <span class="num">01</span><h3>{{ t.prog1t }}</h3><p>{{ t.prog1d }}</p>
+        </div>
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"></path><path d="M9 15a3 3 0 0 0 3 3"></path></svg></div>
+          <span class="num">02</span><h3>{{ t.prog2t }}</h3><p>{{ t.prog2d }}</p>
+        </div>
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H12v16H5.5A2.5 2.5 0 0 0 3 21.5zM21 5.5A2.5 2.5 0 0 0 18.5 3H12v16h6.5a2.5 2.5 0 0 1 2.5 2.5z"></path></svg></div>
+          <span class="num">03</span><h3>{{ t.prog3t }}</h3><p>{{ t.prog3d }}</p>
+        </div>
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l5-7 4 5 3-4 6 6M3 19h18"></path><circle cx="8" cy="6" r="2"></circle></svg></div>
+          <span class="num">04</span><h3>{{ t.prog4t }}</h3><p>{{ t.prog4d }}</p>
+        </div>
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="3"></circle><path d="M5 21v-1a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v1"></path><path d="M12 9v3"></path></svg></div>
+          <span class="num">05</span><h3>{{ t.prog5t }}</h3><p>{{ t.prog5d }}</p>
+        </div>
+        <div class="prog" data-reveal="">
+          <div class="ico"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"></path></svg></div>
+          <span class="num">06</span><h3>{{ t.prog6t }}</h3><p>{{ t.prog6d }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== IMPACT ===== -->
+  <section id="impact" class="sec impact">
+    <svg style="position:absolute; right:-60px; top:-40px; width:320px; opacity:.05; pointer-events:none" viewBox="0 0 20 18" fill="#fff"><path d="M10 0l3.4 6H6.6L10 0zM3.4 12L6.8 6 10 12H3.4zm13.2 0H10l3.2-6 3.4 6z"></path></svg>
+    <div class="wrap">
+      <div class="impact-grid">
+        <div data-reveal="">
+          <span class="kicker">{{ t.impactKicker }}</span>
+          <h2 class="h-sec">{{ t.impactTitle }}</h2>
+          <p class="serif" style="font-size:23px; color:var(--leaf-soft); margin-top:18px; max-width:26ch; line-height:1.45">“{{ t.impactTag }}”</p>
+          <p class="lead">{{ t.impactP1 }}</p>
+          <p class="lead" style="margin-top:14px">{{ t.impactP2 }}</p>
+        </div>
+        <div class="ba" data-reveal="">
+          <figure><figcaption>{{ t.baBefore }}</figcaption><img src="assets/img/story-before.jpg" alt="{{ t.baBeforeAlt }}"></figure>
+          <figure style="margin-top:36px"><figcaption>PLANTIO DE HORTALIÇAS</figcaption><img src="assets/img/story-after.jpg" alt="{{ t.baAfterAlt }}"></figure>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat" data-reveal=""><div class="n">1500</div><div class="l">{{ t.stat1 }}</div></div>
+        <div class="stat" data-reveal=""><div class="n">5<span>+</span></div><div class="l">{{ t.stat2 }}</div></div>
+        <div class="stat" data-reveal=""><div class="n">30<span>+</span></div><div class="l">{{ t.stat3 }}</div></div>
+        <div class="stat" data-reveal=""><div class="n">6</div><div class="l">{{ t.stat4 }}</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== IMAGES ===== -->
+  <section id="images" class="sec">
+    <div class="wrap">
+      <div data-reveal="">
+        <span class="kicker">{{ t.imgKicker }}</span>
+        <h2 class="h-sec">{{ t.imgTitle }}</h2>
+        <p class="lead">{{ t.imgLead }}</p>
+      </div>
+      <div class="gal" data-reveal="">
+        <figure class="g-a"><img src="assets/img/g1.jpg" alt=""><figcaption>{{ t.gal1 }}</figcaption></figure>
+        <figure class="g-b"><img src="assets/img/g2.jpg" alt=""><figcaption>{{ t.gal2 }}</figcaption></figure>
+        <figure class="g-c"><img src="assets/img/g3.jpg" alt=""><figcaption>{{ t.gal3 }}</figcaption></figure>
+        <figure class="g-d"><img src="assets/img/g4.jpg" alt=""><figcaption>Produção de arcos e flechas</figcaption></figure>
+        <figure class="g-e"><img src="assets/img/g5.jpg" alt=""><figcaption>Pinturas em rosto de crianças</figcaption></figure>
+        <figure class="g-f"><img src="assets/img/g6.jpg" alt=""><img src="assets/img/g6.jpg" alt=""><figcaption>Sede de capacitação e treinamento do IMAD em construção (2022)</figcaption></figure>
+      </div><figure class="g-f"><figcaption>Sede de capacitação e treinamento do IMAD em construção</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===== VIDEOS ===== -->
+  <section id="videos" class="sec prog-band">
+    <div class="wrap">
+      <div data-reveal="">
+        <span class="kicker">{{ t.vidKicker }}</span>
+        <h2 class="h-sec">{{ t.vidTitle }}</h2>
+        <p class="lead">{{ t.vidLead }}</p>
+      </div>
+      <div class="vid-empty" data-reveal="">
+        <span class="vid-empty-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="15" height="14" rx="2"></rect><path d="m17 10 5-3v10l-5-3"></path></svg></span>
+        <p>{{ t.vidEmpty }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== READING ===== -->
+  <section id="reading" class="sec read-band">
+    <div class="wrap">
+      <div data-reveal="">
+        <span class="kicker">{{ t.readKicker }}</span>
+        <h2 class="h-sec">{{ t.readTitle }}</h2>
+        <p class="lead">{{ t.readLead }}</p>
+      </div>
+      <div class="read-grid">
+        <a class="read" href="#" data-reveal="">
+          <div class="rico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a0 0 0 0 1 0 0H4z"></path><path d="M14 4v5h5M8 13h8M8 17h6"></path></svg></div>
+          <span class="tag">{{ t.read1tag }}</span><h3>{{ t.read1t }}</h3><p>{{ t.read1d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+        </a>
+        <a class="read" href="#" data-reveal="">
+          <div class="rico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2z"></path><path d="M9 7h7M9 11h7"></path></svg></div>
+          <span class="tag">{{ t.read2tag }}</span><h3>{{ t.read2t }}</h3><p>{{ t.read2d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+        </a>
+        <a class="read" href="#" data-reveal="">
+          <div class="rico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 3v18"></path></svg></div>
+          <span class="tag">{{ t.read3tag }}</span><h3>{{ t.read3t }}</h3><p>{{ t.read3d }}</p>
+          <span class="more">{{ t.readMore }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ECOLINKS ===== -->
+  <section id="ecolinks" class="sec">
+    <div class="wrap">
+      <div data-reveal="">
+        <span class="kicker">{{ t.ecoKicker }}</span>
+        <h2 class="h-sec">{{ t.ecoTitle }}</h2>
+        <p class="lead">{{ t.ecoLead }}</p>
+      </div>
+      <div class="eco-grid" data-reveal="">
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"></path></svg></span><span><span class="et">{{ t.eco1t }}</span><span class="ed">{{ t.eco1d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 8 9 5 4 5c0 4 3 7 8 7zM12 12c0-4 3-7 8-7 0 4-3 7-8 7z"></path></svg></span><span><span class="et">{{ t.eco2t }}</span><span class="ed">{{ t.eco2d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"></circle><path d="M3 21v-1a5 5 0 0 1 5-5h2"></path><circle cx="17" cy="10" r="2.5"></circle><path d="M21 21v-.5a4 4 0 0 0-4-4h-1"></path></svg></span><span><span class="et">{{ t.eco3t }}</span><span class="ed">{{ t.eco3d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg></span></a>
+        <a class="eco" href="#" target="_blank" rel="noopener"><span class="ei"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"></path></svg></span><span><span class="et">{{ t.eco4t }}</span><span class="ed">{{ t.eco4d }}</span></span><span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DONATE ===== -->
+  <section id="donate" class="sec donate">
+    <svg class="deco" style="left:-80px; bottom:-60px; width:380px" viewBox="0 0 20 18" fill="#fff"><path d="M10 0l3.4 6H6.6L10 0zM3.4 12L6.8 6 10 12H3.4zm13.2 0H10l3.2-6 3.4 6z"></path></svg>
+    <div class="wrap">
+      <div class="donate-grid">
+        <div data-reveal="">
+          <span class="kicker">{{ t.donKicker }}</span>
+          <h2>{{ t.donTitle }}</h2>
+          <p class="lead">{{ t.donLead }}</p>
+          <div class="reassure">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
+            <p>{{ t.donReassure }}</p>
+          </div>
+          <div class="kind-list" style="margin-top:24px">
+            <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M2 10h20"></path></svg></span><span><span class="kt">{{ t.kind1t }}</span><div class="kd">{{ t.kind1d }}</div></span></div>
+            <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-7L9 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path></svg></span><span><span class="kt">{{ t.kind2t }}</span><div class="kd">{{ t.kind2d }}</div></span></div>
+            <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"></path></svg></span><span><span class="kt">{{ t.kind3t }}</span><div class="kd">{{ t.kind3d }}</div></span></div>
+          </div>
+        </div>
+
+        <div class="dcard" data-reveal="">
+          <h3>{{ t.dCardTitle }}</h3>
+          <div class="dtabs">
+            <button class="{{ moneyTab }}" onClick="{{ setMoney }}">{{ t.dTabMoney }}</button>
+            <button class="{{ kindTab }}" onClick="{{ setKind }}">{{ t.dTabKind }}</button>
+          </div>
+
+          <div class="{{ moneyShow }}">
+            <div class="amts">
+              <button class="{{ a25 }}" onClick="{{ pick25 }}">R$25</button>
+              <button class="{{ a50 }}" onClick="{{ pick50 }}">R$50</button>
+              <button class="{{ a100 }}" onClick="{{ pick100 }}">R$100</button>
+            </div>
+            <div class="custom">
+              <span>R$</span>
+              <input type="number" min="1" placeholder="{{ t.dCustom }}" value="{{ customVal }}" onInput="{{ onCustom }}" onFocus="{{ pickCustom }}">
+            </div>
+            <div class="freq">
+              <button class="{{ fOnce }}" onClick="{{ setOnce }}">{{ t.dOnce }}</button>
+              <button class="{{ fMonthly }}" onClick="{{ setMonthly }}">{{ t.dMonthly }}</button>
+            </div>
+            <button class="btn btn-primary">{{ t.dGive }} {{ giveLabel }}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            <p style="font-size:12.5px; color:var(--muted); text-align:center; margin-top:14px">{{ t.dSecure }}</p>
+          </div>
+
+          <div class="{{ kindShow }}">
+            <p style="font-size:14.5px; color:var(--muted); line-height:1.6">{{ t.dKindBody }}</p>
+            <div class="kind-list" style="margin-top:18px">
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"></path></svg></span><span><span class="kt">{{ t.dKind1 }}</span></span></div>
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 7h-7L9 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path></svg></span><span><span class="kt">{{ t.dKind2 }}</span></span></div>
+              <div class="kind"><span class="ki"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="7" r="4"></circle><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path></svg></span><span><span class="kt">{{ t.dKind3 }}</span></span></div>
+            </div>
+            <a href="#contact" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:20px; padding:16px">{{ t.dKindCta }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="sec">
+    <div class="wrap">
+      <div data-reveal="" style="margin-bottom:48px">
+        <span class="kicker">{{ t.conKicker }}</span>
+        <h2 class="h-sec">{{ t.conTitle }}</h2>
+        <p class="lead">{{ t.conLead }}</p>
+      </div>
+      <div class="contact-grid">
+        <div data-reveal="">
+          <div class="cinfo">
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></span><span><div class="cl">{{ t.conAddrL }}</div><div class="cv">Dourados · Mato Grosso do Sul</div></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 6 10 7L22 6"></path></svg></span><span><div class="cl">{{ t.conEmailL }}</div><a class="cv" href="mailto:vitocomar@gmail.com">vitocomar@gmail.com</a></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"></path></svg></span><span><div class="cl">{{ t.conPhoneL }}</div><a class="cv" href="tel:+5567991901919">+55 67 99190-1919</a></span></div>
+            <div class="crow"><span class="ci"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"></path></svg></span><span><div class="cl">{{ t.conSocialL }}</div><a class="cv" href="#" target="_blank" rel="noopener">facebook.com/imad.dourados</a></span></div>
+          </div>
+          <div class="credits">{{ t.credits1 }} <b>Vito Comar</b>. {{ t.credits2 }}</div>
+        </div>
+
+        <form class="form" data-reveal="" onSubmit="{{ onSubmit }}">
+          <div class="frow">
+            <div class="field"><label>{{ t.fName }}</label><input type="text" placeholder="{{ t.fNameP }}" required=""></div>
+            <div class="field"><label>{{ t.fEmail }}</label><input type="email" placeholder="{{ t.fEmailP }}" required=""></div>
+          </div>
+          <div class="field"><label>{{ t.fSubject }}</label><input type="text" placeholder="{{ t.fSubjectP }}"></div>
+          <div class="field"><label>{{ t.fMsg }}</label><textarea rows="5" placeholder="{{ t.fMsgP }}" required=""></textarea></div>
+          <button type="submit" class="btn btn-primary">{{ sendLabel }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="foot-img"><img src="assets/img/footer.jpg" alt=""></div>
+    <div class="wrap foot-main">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <div style="display:flex; align-items:center; gap:13px; margin-bottom:18px">
+            <img src="assets/imad-symbol.png" alt="IMAD" style="height:52px; width:auto; margin:0">
+            <span style="font-weight:800; font-size:30px; letter-spacing:.04em; color:#fff">IMAD</span>
+          </div>
+          <p>{{ t.footStatement }}</p>
+          <div class="socials">
+            <a href="mailto:vitocomar@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 6 10 7L22 6"></path></svg></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"></path></svg></a>
+            <a href="tel:+5567991901919" aria-label="Phone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"></path></svg></a>
+          </div>
+        </div>
+        <div class="foot-col">
+          <h4>{{ t.footNav }}</h4>
+          <a href="#about" onClick="{{ closeMenu }}">{{ t.nav.about }}</a>
+          <a href="#programs">{{ t.progKicker }}</a>
+          <a href="#impact">{{ t.impactKicker }}</a>
+          <a href="#images">{{ t.nav.images }}</a>
+          <a href="#reading">{{ t.nav.reading }}</a>
+        </div>
+        <div class="foot-col">
+          <h4>{{ t.footGet }}</h4>
+          <a href="#donate">{{ t.nav.donate }}</a>
+          <a href="#contact">{{ t.ctaVolunteer }}</a>
+          <a href="#ecolinks">{{ t.nav.ecolinks }}</a>
+          <a href="#contact">{{ t.nav.contact }}</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap"><div class="foot-bot">
+      <span>© {{ year }} IMAD · {{ t.footRights }}</span>
+      <span>{{ t.footMade }}</span>
+    </div></div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;photo2Caption&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Replantio espécies nativas com 4 anos&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Impact story&quot;}}">
+const TR = {
+  pt: {
+    brandSub: "Instituto de Meio Ambiente e Desenvolvimento",
+    nav: { home:"Início", about:"Sobre", images:"Imagens", videos:"Vídeos", reading:"Publicações", ecolinks:"Ecolinks", donate:"Doar", contact:"Contato" },
+    heroKicker: "ONG · OSCIP · desde 2002",
+    heroTitle: "Equilíbrio entre as pessoas e a natureza.",
+    heroLead: "Há mais de 20 anos promovemos o ecodesenvolvimento no Mato Grosso do Sul — unindo equidade social, viabilidade econômica e integridade ambiental.",
+    heroTag: "De pequenas coisas, grandes coisas crescem.",
+    ctaDonate: "Doar agora",
+    ctaVolunteer: "Quero ajudar · Voluntariar",
+    heroM1: "Fundado", heroM2: "Status legal", heroM3: "Onde atuamos",
+    heroImgAlt: "Vista aérea de floresta e água",
+    heroBadge: "Três setas, uma só direção: regenerar a vida.",
+    aboutKicker: "Quem somos",
+    aboutTitle: "Cuidar da terra é cuidar de quem vive nela.",
+    aboutP1: "O IMAD é uma organização da sociedade civil sem fins lucrativos, fundada em 2002 em Dourados-MS e qualificada como OSCIP. Trabalhamos lado a lado com comunidades, agricultores e povos indígenas Guarani-Kaiowá.",
+    aboutP2: "Nossa missão é simples e ambiciosa: reconciliar o desenvolvimento humano com a saúde dos ecossistemas, semeando agora as florestas e os modos de vida de amanhã.",
+    chip1: "Agroecologia", chip2: "Restauração ecológica", chip3: "Educação ambiental",
+    pillar1t: "Equidade social", pillar1d: "Renda, dignidade e protagonismo para as comunidades que cuidam do território.",
+    pillar2t: "Viabilidade econômica", pillar2d: "Modelos produtivos que sustentam famílias sem esgotar a natureza.",
+    pillar3t: "Integridade ambiental", pillar3d: "Solos vivos, nascentes limpas e biodiversidade que se regenera.",
+    progKicker: "O que fazemos",
+    progTitle: "Programas que unem floresta e comunidade.",
+    progLead: "Seis frentes de trabalho que se entrelaçam — do plantio das primeiras mudas à ação climática de longo prazo.",
+    prog1t: "Agroecologia & Agrofloresta", prog1d: "Sistemas agroflorestais que produzem alimento e recompõem o solo ao mesmo tempo.",
+    prog2t: "Restauração de áreas & nascentes", prog2d: "Recuperação de áreas degradadas e proteção das nascentes que abastecem a vida.",
+    prog3t: "Educação ambiental", prog3d: "Formação de crianças, jovens e lideranças para uma cultura de cuidado.",
+    prog4t: "Unidades de conservação & corredores", prog4d: "Apoio a áreas protegidas e corredores ecológicos que reconectam a paisagem.",
+    prog5t: "Apoio a povos indígenas", prog5d: "Parceria com comunidades Guarani-Kaiowá pela terra, cultura e autonomia.",
+    prog6t: "Ação climática", prog6d: "Sequestro de carbono e resiliência diante das mudanças do clima.",
+    impactKicker: "Impacto · História",
+    impactTitle: "Das cinzas, um mundo mais verde.",
+    impactTag: "Do fogo renasce uma floresta — e com ela, uma comunidade.",
+    impactP1: "Em 2021, um incêndio devastou terras de uma comunidade Guarani-Kaiowá. Onde restaram cinzas, começamos juntos a replantar.",
+    impactP2: "Mudas nativas, hortas agroecológicas e a reconstrução dos laços de quem vive da terra: a recuperação é lenta, viva e profundamente humana.",
+    baBefore: "Nascente em recuperação", baAfter: "Reconstrução em andamento", baBeforeAlt: "Nascente e área em recuperação", baAfterAlt: "Nova estrutura sendo construída na comunidade",
+    stat1: "Mudas plantadas", stat2: "Nascentes em recuperação", stat3: "Famílias apoiadas", stat4: "Anos de atuação",
+    imgKicker: "Imagens", imgTitle: "O trabalho em imagens.", imgLead: "Da semente à floresta, das mãos à comunidade. Um registro vivo do que cultivamos juntos.",
+    gal1:"Artesanato Guarani-Kaiowá", gal2:"Horta agroecológica", gal3:"Encontro comunitário", gal4:"Bijuteria Guarani-Kaiowá", gal5:"Produção de arcos e flechas", gal6:"Pinturas de rosto em crianças",
+    vidKicker: "Vídeos", vidTitle: "Histórias em movimento.", vidLead: "Documentários curtos e registros de campo sobre as pessoas e os territórios que cuidamos.",
+    vidEmpty: "Em breve: vídeos sobre o nosso trabalho de campo e as comunidades que apoiamos.",
+    readKicker: "Publicações & Leitura", readTitle: "Para conhecer mais a fundo.", readLead: "Dossiês, publicações e materiais para quem quer entender e apoiar o nosso trabalho.",
+    read1tag:"Dossiê", read1t:"Dossiê de atividades", read1d:"Um panorama completo dos projetos, parcerias e resultados do IMAD ao longo dos anos.",
+    read2tag:"Publicação", read2t:"Cartilhas & folhetos", read2d:"Materiais educativos sobre agroecologia, restauração e cuidado com as nascentes.",
+    read3tag:"Resumo", read3t:"Resumo institucional", read3d:"Quem somos, nossa missão e como atuamos — em poucas páginas.",
+    readMore:"Ler",
+    ecoKicker: "Ecolinks", ecoTitle: "Parceiros e recursos.", ecoLead: "Uma rede de organizações e fontes que caminham conosco pela regeneração.",
+    eco1t:"Rede de ONGs ambientais", eco1d:"Parceiros pela conservação no Cerrado e na Mata Atlântica",
+    eco2t:"Agroecologia Brasil", eco2d:"Conhecimento e redes de agricultura regenerativa",
+    eco3t:"Apoio a povos indígenas", eco3d:"Organizações aliadas dos Guarani-Kaiowá",
+    eco4t:"Restauração florestal", eco4d:"Iniciativas de recuperação de áreas degradadas",
+    donKicker: "Doe & faça parte", donTitle: "Sua doação vira floresta.", donLead: "Cada contribuição se transforma em mudas plantadas, nascentes protegidas e famílias fortalecidas. Apoie de forma única ou mensal.",
+    donReassure: "O IMAD é uma OSCIP sem fins lucrativos. Cada real é aplicado com transparência diretamente nos projetos de campo.",
+    kind1t:"Doação financeira", kind1d:"Pix, cartão ou transferência — único ou recorrente.",
+    kind2t:"Doação em espécie", kind2d:"Mudas, ferramentas, sementes e materiais.",
+    kind3t:"Seja voluntário(a)", kind3d:"Doe seu tempo e talento aos nossos projetos.",
+    dCardTitle:"Faça sua doação", dTabMoney:"Dinheiro", dTabKind:"Em espécie · Voluntariar",
+    dCustom:"Outro valor", dOnce:"Única", dMonthly:"Mensal", dGive:"Doar", dSecure:"Pagamento seguro · Pix, cartão ou boleto",
+    dKindBody:"Você também pode contribuir com mudas, ferramentas, sementes ou doando seu tempo. Toda ajuda planta o futuro.",
+    dKind1:"Mudas, sementes e insumos", dKind2:"Ferramentas e materiais", dKind3:"Trabalho voluntário",
+    dKindCta:"Fale conosco para doar",
+    conKicker:"Contato & Créditos", conTitle:"Vamos plantar algo juntos?", conLead:"Tem uma ideia, uma parceria ou quer apoiar? Escreva para nós — respondemos com carinho.",
+    conAddrL:"Endereço", conEmailL:"E-mail", conPhoneL:"Telefone · WhatsApp", conSocialL:"Redes sociais",
+    credits1:"Idealização e coordenação:", credits2:"Site desenvolvido com dedicação à causa socioambiental do IMAD.",
+    fName:"Nome", fNameP:"Seu nome", fEmail:"E-mail", fEmailP:"voce@email.com", fSubject:"Assunto", fSubjectP:"Como podemos ajudar?", fMsg:"Mensagem", fMsgP:"Escreva sua mensagem...", fSend:"Enviar mensagem", fSent:"Mensagem enviada ✓",
+    footStatement:"O IMAD é uma ONG e organização sem fins lucrativos registrada no Brasil, qualificada como OSCIP, com sede em Dourados, Mato Grosso do Sul.",
+    footNav:"Navegue", footGet:"Participe", footRights:"Todos os direitos reservados.", footMade:"Feito com cuidado pela vida.",
+  },
+  en: {
+    brandSub: "Institute for Environment and Development",
+    nav: { home:"Home", about:"About", images:"Images", videos:"Videos", reading:"Reading", ecolinks:"Ecolinks", donate:"Donate", contact:"Contact" },
+    heroKicker: "NGO · OSCIP · since 2002",
+    heroTitle: "Balance between people and nature.",
+    heroLead: "For over 20 years we've advanced ecodevelopment in Mato Grosso do Sul, Brazil — uniting social equity, economic viability and environmental integrity.",
+    heroTag: "From little things big things grow.",
+    ctaDonate: "Donate now",
+    ctaVolunteer: "Get involved · Volunteer",
+    heroM1: "Founded", heroM2: "Legal status", heroM3: "Where we work",
+    heroImgAlt: "Aerial view of forest and water",
+    heroBadge: "Three arrows, one direction: regenerating life.",
+    aboutKicker: "Who we are",
+    aboutTitle: "To care for the land is to care for those who live on it.",
+    aboutP1: "IMAD is a non-profit civil-society organization, founded in 2002 in Dourados-MS and qualified as an OSCIP. We work side by side with communities, farmers and the Guarani-Kaiowá indigenous people.",
+    aboutP2: "Our mission is simple and ambitious: to reconcile human development with the health of ecosystems — sowing today the forests and livelihoods of tomorrow.",
+    chip1: "Agroecology", chip2: "Ecological restoration", chip3: "Environmental education",
+    pillar1t: "Social equity", pillar1d: "Income, dignity and agency for the communities who care for the land.",
+    pillar2t: "Economic viability", pillar2d: "Productive models that sustain families without exhausting nature.",
+    pillar3t: "Environmental integrity", pillar3d: "Living soils, clean springs and biodiversity that regenerates itself.",
+    progKicker: "What we do",
+    progTitle: "Programs that unite forest and community.",
+    progLead: "Six interwoven fronts — from planting the first seedlings to long-term climate action.",
+    prog1t: "Agroecology & Agroforestry", prog1d: "Agroforestry systems that grow food and rebuild the soil at the same time.",
+    prog2t: "Restoring land & springs", prog2d: "Recovering degraded areas and protecting the springs that sustain life.",
+    prog3t: "Environmental education", prog3d: "Nurturing children, youth and leaders for a culture of care.",
+    prog4t: "Conservation units & corridors", prog4d: "Supporting protected areas and ecological corridors that reconnect the landscape.",
+    prog5t: "Support for indigenous peoples", prog5d: "Partnering with Guarani-Kaiowá communities for land, culture and autonomy.",
+    prog6t: "Climate action", prog6d: "Carbon sequestration and resilience in the face of a changing climate.",
+    impactKicker: "Impact · Story",
+    impactTitle: "From out of the ashes, a greener world.",
+    impactTag: "From fire a forest is reborn — and with it, a community.",
+    impactP1: "In 2021, a wildfire devastated the land of a Guarani-Kaiowá community. Where only ashes remained, we began replanting together.",
+    impactP2: "Native seedlings, agroecological gardens and the rebuilding of the bonds of those who live off the land: recovery is slow, alive and deeply human.",
+    baBefore: "Spring under recovery", baAfter: "Rebuilding underway", baBeforeAlt: "Spring and area in recovery", baAfterAlt: "New structure being built in the community",
+    stat1: "Seedlings planted", stat2: "Springs in recovery", stat3: "Families supported", stat4: "Years of action",
+    imgKicker: "Images", imgTitle: "The work, in pictures.", imgLead: "From seed to forest, from hands to community. A living record of what we grow together.",
+    gal1:"Guarani-Kaiowá craftwork", gal2:"Agroecological garden", gal3:"Community gathering", gal4:"Guarani-Kaiowá beadwork", gal5:"Making bows and arrows", gal6:"Face painting with children",
+    vidKicker: "Videos", vidTitle: "Stories in motion.", vidLead: "Short documentaries and field footage about the people and territories we care for.",
+    vidEmpty: "Coming soon: videos about our fieldwork and the communities we support.",
+    readKicker: "Reading & Publications", readTitle: "Go deeper.", readLead: "Dossiers, publications and materials for those who want to understand and support our work.",
+    read1tag:"Dossier", read1t:"Activities dossier", read1d:"A complete overview of IMAD's projects, partnerships and results over the years.",
+    read2tag:"Publication", read2t:"Booklets & folders", read2d:"Educational materials on agroecology, restoration and spring protection.",
+    read3tag:"Summary", read3t:"Institutional summary", read3d:"Who we are, our mission and how we work — in a few pages.",
+    readMore:"Read",
+    ecoKicker: "Ecolinks", ecoTitle: "Partners & resources.", ecoLead: "A network of organizations and sources walking with us toward regeneration.",
+    eco1t:"Environmental NGO network", eco1d:"Partners for conservation in the Cerrado and Atlantic Forest",
+    eco2t:"Agroecology Brazil", eco2d:"Knowledge and networks for regenerative agriculture",
+    eco3t:"Indigenous peoples support", eco3d:"Organizations allied with the Guarani-Kaiowá",
+    eco4t:"Forest restoration", eco4d:"Initiatives recovering degraded areas",
+    donKicker: "Donate & take part", donTitle: "Your gift becomes forest.", donLead: "Every contribution turns into seedlings planted, springs protected and families strengthened. Give once or monthly.",
+    donReassure: "IMAD is a non-profit OSCIP. Every cent is applied transparently and directly to field projects.",
+    kind1t:"Financial donation", kind1d:"Pix, card or transfer — one-time or recurring.",
+    kind2t:"In-kind donation", kind2d:"Seedlings, tools, seeds and materials.",
+    kind3t:"Become a volunteer", kind3d:"Give your time and talent to our projects.",
+    dCardTitle:"Make your donation", dTabMoney:"Money", dTabKind:"In-kind · Volunteer",
+    dCustom:"Other amount", dOnce:"One-time", dMonthly:"Monthly", dGive:"Donate", dSecure:"Secure payment · Pix, card or bank slip",
+    dKindBody:"You can also contribute with seedlings, tools, seeds — or by giving your time. Every bit plants the future.",
+    dKind1:"Seedlings, seeds & supplies", dKind2:"Tools & materials", dKind3:"Volunteer work",
+    dKindCta:"Contact us to donate",
+    conKicker:"Contact & Credits", conTitle:"Shall we plant something together?", conLead:"Have an idea, a partnership, or want to support us? Write to us — we reply with care.",
+    conAddrL:"Address", conEmailL:"Email", conPhoneL:"Phone · WhatsApp", conSocialL:"Social media",
+    credits1:"Conceived and coordinated by:", credits2:"Site built in dedication to IMAD's social-environmental cause.",
+    fName:"Name", fNameP:"Your name", fEmail:"Email", fEmailP:"you@email.com", fSubject:"Subject", fSubjectP:"How can we help?", fMsg:"Message", fMsgP:"Write your message...", fSend:"Send message", fSent:"Message sent ✓",
+    footStatement:"IMAD is a registered NGO and non-profit organisation in Brazil, qualified as an OSCIP, based in Dourados, Mato Grosso do Sul.",
+    footNav:"Explore", footGet:"Get involved", footRights:"All rights reserved.", footMade:"Made with care for life.",
+  }
+};
+
+class Component extends DCLogic {
+  state = { lang:"pt", menuOpen:false, amount:50, custom:"", freq:"once", dmode:"money", sent:false };
+
+  componentDidMount(){ this._setup(); }
+  componentDidUpdate(){ this._setup(); }
+  _setup(){
+    if(this._io) this._io.disconnect();
+    this._io = new IntersectionObserver((es)=>{
+      es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); this._io.unobserve(e.target); } });
+    }, { threshold:0.12, rootMargin:"0px 0px -8% 0px" });
+    const reveal = (el)=> el.classList.add("in");
+    const all = ()=> document.querySelectorAll("[data-reveal]");
+    requestAnimationFrame(()=>{
+      all().forEach(el=>{
+        if(el.classList.contains("in")) return;
+        const r = el.getBoundingClientRect();
+        if(r.top < (window.innerHeight || 900) * 0.92) { reveal(el); return; }
+        this._io.observe(el);
+      });
+    });
+    // Safety net: if IntersectionObserver never fires in this render context, reveal everything.
+    clearTimeout(this._fallback);
+    this._fallback = setTimeout(()=> all().forEach(reveal), 600);
+    // Scroll fallback in case IO is inert.
+    if(!this._scroll){
+      this._scroll = ()=>{ all().forEach(el=>{ if(!el.classList.contains("in") && el.getBoundingClientRect().top < (window.innerHeight||900)*0.92) reveal(el); }); };
+      window.addEventListener("scroll", this._scroll, { passive:true });
+    }
+  }
+
+  renderVals(){
+    const t = TR[this.state.lang];
+    const L = this.state.lang;
+    const cur = (n)=> this.state.amount===n && !this.state.customActive;
+    return {
+      t, year: 2026,
+      photo2Caption: this.props.photo2Caption ?? "Replantio espécies nativas com 4 anos",
+      ptClass: L==="pt" ? "on" : "",
+      enClass: L==="en" ? "on" : "",
+      setPt: ()=> this.setState({lang:"pt"}),
+      setEn: ()=> this.setState({lang:"en"}),
+      menuOpen: this.state.menuOpen,
+      sheetClass: this.state.menuOpen ? "sheet open" : "sheet",
+      toggleMenu: ()=> this.setState(s=>({menuOpen:!s.menuOpen})),
+      closeMenu: ()=> this.setState({menuOpen:false}),
+      // donate amounts
+      a25: this.state.amount===25 ? "amt on" : "amt",
+      a50: this.state.amount===50 ? "amt on" : "amt",
+      a100: this.state.amount===100 ? "amt on" : "amt",
+      pick25: ()=> this.setState({amount:25, custom:""}),
+      pick50: ()=> this.setState({amount:50, custom:""}),
+      pick100: ()=> this.setState({amount:100, custom:""}),
+      pickCustom: ()=> this.setState({amount:0}),
+      customVal: this.state.custom,
+      onCustom: (e)=> this.setState({custom:e.target.value, amount:0}),
+      giveLabel: this.state.custom ? ("R$"+this.state.custom) : (this.state.amount ? ("R$"+this.state.amount) : ""),
+      fOnce: this.state.freq==="once" ? "on" : "",
+      fMonthly: this.state.freq==="monthly" ? "on" : "",
+      setOnce: ()=> this.setState({freq:"once"}),
+      setMonthly: ()=> this.setState({freq:"monthly"}),
+      // donate tabs
+      moneyTab: this.state.dmode==="money" ? "dtab on" : "dtab",
+      kindTab: this.state.dmode==="kind" ? "dtab on" : "dtab",
+      setMoney: ()=> this.setState({dmode:"money"}),
+      setKind: ()=> this.setState({dmode:"kind"}),
+      moneyShow: this.state.dmode==="money" ? "" : "hidden-pane",
+      kindShow: this.state.dmode==="kind" ? "" : "hidden-pane",
+      // contact form
+      onSubmit: (e)=>{ e.preventDefault(); this.setState({sent:true}); },
+      sendLabel: this.state.sent ? t.fSent : t.fSend,
+    };
+  }
+}
+</script>
+</body>
+</html>
