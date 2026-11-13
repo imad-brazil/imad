@@ -819,6 +819,18 @@ class Component extends DCLogic {
     const hdr = document.querySelector("[data-hdr]");
     const onScroll = ()=>{ if(hdr) hdr.classList.toggle("stuck", window.scrollY > 40); };
     window.addEventListener("scroll", onScroll, { passive:true }); onScroll();
+
+    // Mantém o link "História" alinhado abaixo do cabeçalho fixo.
+    document.addEventListener("click", (e)=>{
+      const link = e.target.closest('a[href="#impact"]');
+      if(!link) return;
+      const target = document.getElementById("impact");
+      if(!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - 128;
+      window.scrollTo({ top, behavior:"smooth" });
+      if(window.location.hash !== "#impact") history.pushState(null, "", "#impact");
+    });
   }
 
   _animateCounters(){
