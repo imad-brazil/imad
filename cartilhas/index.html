@@ -19,6 +19,7 @@
     .resource-grid{display:flex;flex-direction:column;gap:22px}.resource{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh);display:flex;gap:28px;align-items:stretch}.resource .cover{flex:0 0 120px;display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;align-self:flex-start;transition:transform .2s,box-shadow .2s}.resource .cover:hover{transform:translateY(-2px);box-shadow:var(--sh)}.resource .cover img{display:block;width:100%;height:auto}.resource .body{display:flex;flex-direction:column;flex:1;min-width:0;padding:4px 0}.resource .type{font:700 10px 'Montserrat',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--gold-d)}.resource h3{font-size:26px;margin:12px 0 10px}.resource p{font-size:15px;color:var(--muted);margin:0 0 20px;max-width:62ch}.resource .actions{margin-top:auto;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center}.resource .action{color:var(--green);font-weight:900;font-size:13px}.resource .action:hover{text-decoration:underline}.resource .action.dl{background:var(--green);color:#fff;border-radius:999px;padding:8px 15px}.resource .action.dl:hover{background:var(--green2);text-decoration:none}
     .how{margin-top:58px;padding:28px 30px;background:var(--cream);border-radius:var(--r);display:flex;gap:18px;align-items:flex-start}.how strong{font-family:'Playfair Display',serif;font-size:20px;color:var(--green-ink)}.how p{margin:5px 0 0;color:var(--muted);font-size:14px}
     footer{background:var(--green-ink);color:rgba(255,255,255,.78);padding:30px 0}footer .foot{display:flex;justify-content:space-between;gap:18px;align-items:center;font-size:13px}footer strong{font:700 18px Arial,sans-serif;color:#fff;letter-spacing:.04em}footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+    .mosaic{display:flex;gap:4px;padding:4px;background:var(--green-ink)}.mrow{display:flex;gap:4px;flex:var(--s) 1 0;min-width:0}.mosaic figure{margin:0;flex:var(--r) 1 0;min-width:0;overflow:hidden}.mosaic img{display:block;width:100%;height:auto;aspect-ratio:var(--r);object-fit:cover;transition:transform .4s}.mosaic figure:hover img{transform:scale(1.04)}@media(max-width:900px){.mosaic{flex-direction:column}.mrow{flex:none}}@media(max-width:560px){.mosaic{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.mrow{flex:none}.mosaic figure{flex:none;scroll-snap-align:start}.mosaic img{height:170px;width:auto}}
     @media(max-width:760px){.wrap{padding:0 20px}main.wrap{padding-bottom:64px}.hdr-in{height:68px}.nav{display:none}.brand img{height:36px}.brand strong{font-size:22px}.back{padding:8px 13px;font-size:12px}.hero{padding:48px 0}.hero p{font-size:16px}.section-head{display:block}.count{display:block;margin-top:12px}.resource{gap:18px;padding:18px}.resource .cover{flex-basis:96px}.resource h3{font-size:21px;margin:8px 0 6px}.resource p{font-size:14px;margin-bottom:14px}.how{padding:22px;display:block}footer .foot{display:block}footer .foot span{display:block;margin-top:8px}}
   </style>
 </head>
@@ -39,6 +40,25 @@
       <a class="back" href="../">← Voltar ao site</a>
     </div>
   </header>
+
+  <section class="mosaic" aria-label="Fotos de atividades do IMAD">
+    <div class="mrow" style="--s:4.978">
+      <figure style="--r:0.920"><img src="../assets/img/projetos/mosaico-01.webp" width="368" height="400" alt="Crianças indígenas com pintura no rosto" loading="eager" decoding="async"></figure>
+      <figure style="--r:0.823"><img src="../assets/img/projetos/mosaico-02.webp" width="395" height="480" alt="Oficina de mapeamento do território sobre imagem de satélite" loading="eager" decoding="async"></figure>
+      <figure style="--r:0.754"><img src="../assets/img/projetos/mosaico-03.webp" width="362" height="480" alt="Ancião indígena com espigas de milho tradicional" loading="eager" decoding="async"></figure>
+      <figure style="--r:0.840"><img src="../assets/img/projetos/mosaico-04.webp" width="403" height="480" alt="Mapa do território Pirakuá – proteção das nascentes" loading="eager" decoding="async"></figure>
+      <figure style="--r:0.914"><img src="../assets/img/projetos/mosaico-05.webp" width="373" height="408" alt="Seminário em roda, Dourados, 2010" loading="eager" decoding="async"></figure>
+      <figure style="--r:0.727"><img src="../assets/img/projetos/mosaico-06.webp" width="349" height="480" alt="Lideranças indígenas com colares e artesanato" loading="eager" decoding="async"></figure>
+    </div>
+    <div class="mrow" style="--s:4.735">
+      <figure style="--r:0.708"><img src="../assets/img/projetos/mosaico-07.webp" width="340" height="480" alt="Programa Kaiowa-Ñandéva – gestão territorial em áreas indígenas" loading="lazy" decoding="async"></figure>
+      <figure style="--r:0.742"><img src="../assets/img/projetos/mosaico-08.webp" width="356" height="480" alt="Horta em canteiros na aldeia" loading="lazy" decoding="async"></figure>
+      <figure style="--r:0.833"><img src="../assets/img/projetos/mosaico-09.webp" width="400" height="480" alt="Artesanato de taquara em confecção" loading="lazy" decoding="async"></figure>
+      <figure style="--r:0.915"><img src="../assets/img/projetos/mosaico-10.webp" width="439" height="480" alt="Mulheres indígenas em roda de conversa" loading="lazy" decoding="async"></figure>
+      <figure style="--r:0.752"><img src="../assets/img/projetos/mosaico-11.webp" width="361" height="480" alt="Jovens indígenas em atividade coletiva" loading="lazy" decoding="async"></figure>
+      <figure style="--r:0.785"><img src="../assets/img/projetos/mosaico-12.webp" width="377" height="480" alt="Reunião com a comunidade na aldeia" loading="lazy" decoding="async"></figure>
+    </div>
+  </section>
 
   <section class="hero">
     <div class="wrap">
