@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Projetos, programas e iniciativas realizados pelo Instituto de Meio Ambiente e Desenvolvimento (IMAD) desde 2002.">
+  <title>Projetos Realizados | IMAD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Lato:wght@400;700;900&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--green:#1E4E5F;--green2:#16404E;--green-ink:#123039;--sage:#6CBA73;--sage-d:#4E9E63;--sage-soft:#E9F1E6;--gold:#C6A45C;--gold-d:#B08F45;--cream:#F5F2EA;--paper:#fff;--bg:#FCFBF7;--ink:#1E2A26;--muted:#5C6A62;--line:#E6E0D1;--sh:0 1px 2px rgba(20,50,45,.04),0 12px 34px rgba(20,50,45,.07);--r:18px}
+    [hidden]{display:none!important}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.62 'Lato',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:0 30px}
+    h1,h2,h3{font-family:'Playfair Display',Georgia,serif;line-height:1.08;margin:0;color:var(--ink)}.hdr{position:sticky;top:0;z-index:10;background:rgba(252,251,247,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.hdr-in{height:76px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:11px;margin-right:auto;color:var(--green-ink)}.brand img{width:auto;height:42px}.brand strong{font:700 25px/1 Arial,sans-serif;letter-spacing:.03em}.nav{display:flex;align-items:center;gap:24px;font:600 13px 'Montserrat',sans-serif;color:var(--muted)}.nav a:hover{color:var(--green)}.back{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:9px 17px;font-weight:900;font-size:13px;color:var(--green);white-space:nowrap}.back:hover{background:var(--sage-soft);border-color:var(--sage)}
+    .hero{padding:66px 0 58px;background:var(--cream);border-bottom:1px solid var(--line)}.crumb{font:700 11px 'Montserrat',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-d);margin-bottom:20px}.crumb a{color:var(--muted)}.hero h1{font-size:clamp(38px,5vw,58px);max-width:16ch}.hero p{max-width:650px;color:var(--muted);font-size:18px;margin:18px 0 0}.kicker{display:inline-flex;align-items:center;gap:10px;color:var(--gold-d);font:700 11px 'Montserrat',sans-serif;letter-spacing:.18em;text-transform:uppercase}.kicker:before{content:"";width:26px;height:2px;background:var(--gold)}
+    main{padding:62px 0 90px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}.section-head h2{font-size:clamp(27px,3vw,36px);margin-top:12px}.section-head p{color:var(--muted);margin:10px 0 0;max-width:58ch}.count{font:600 12px 'Montserrat',sans-serif;color:var(--muted);white-space:nowrap}
+    .tools{display:flex;gap:12px;align-items:center;margin:30px 0 26px}.search{width:min(100%,420px);border:1px solid var(--line);border-radius:999px;background:#fff;padding:13px 18px;font:16px 'Lato',sans-serif;color:var(--ink);outline:none}.search:focus{border-color:var(--sage-d);box-shadow:0 0 0 3px rgba(108,186,115,.14)}
+    .empty{background:var(--paper);border:1px dashed #CFC8B7;border-radius:var(--r);padding:54px 24px;text-align:center}.empty-icon{width:58px;height:58px;margin:0 auto 18px;border-radius:17px;background:var(--sage-soft);color:var(--sage-d);display:grid;place-items:center}.empty h3{font-size:25px}.empty p{max-width:560px;margin:12px auto 0;color:var(--muted)}.empty .note{display:inline-block;margin-top:20px;padding:7px 13px;border-radius:999px;background:var(--cream);color:var(--green);font:600 11px 'Montserrat',sans-serif}
+    .resource-grid{display:flex;flex-direction:column;gap:22px}.resource{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh);display:flex;gap:28px;align-items:stretch}.resource .cover{flex:0 0 120px;display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;align-self:flex-start;transition:transform .2s,box-shadow .2s}.resource .cover:hover{transform:translateY(-2px);box-shadow:var(--sh)}.resource .cover img{display:block;width:100%;height:auto}.resource .body{display:flex;flex-direction:column;flex:1;min-width:0;padding:4px 0}.resource .type{font:700 10px 'Montserrat',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--gold-d)}.resource h3{font-size:26px;margin:12px 0 10px}.resource p{font-size:15px;color:var(--muted);margin:0 0 20px;max-width:62ch}.resource .year{flex:0 0 120px;align-self:flex-start;background:var(--sage-soft);color:var(--green);border-radius:12px;padding:18px 10px;text-align:center;font:700 15px/1.25 'Montserrat',sans-serif}.resource .partner{font-size:13px;color:var(--muted)}.resource .partner b{color:var(--green-ink);font-weight:900}.resource .actions{margin-top:auto;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center}.resource .action{color:var(--green);font-weight:900;font-size:13px}.resource .action:hover{text-decoration:underline}.resource .action.dl{background:var(--green);color:#fff;border-radius:999px;padding:8px 15px}.resource .action.dl:hover{background:var(--green2);text-decoration:none}
+    .how{margin-top:58px;padding:28px 30px;background:var(--cream);border-radius:var(--r);display:flex;gap:18px;align-items:flex-start}.how strong{font-family:'Playfair Display',serif;font-size:20px;color:var(--green-ink)}.how p{margin:5px 0 0;color:var(--muted);font-size:14px}
+    footer{background:var(--green-ink);color:rgba(255,255,255,.78);padding:30px 0}footer .foot{display:flex;justify-content:space-between;gap:18px;align-items:center;font-size:13px}footer strong{font:700 18px Arial,sans-serif;color:#fff;letter-spacing:.04em}footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+    @media(max-width:760px){.wrap{padding:0 20px}.hdr-in{height:68px}.nav{display:none}.brand img{height:36px}.brand strong{font-size:22px}.back{padding:8px 13px;font-size:12px}.hero{padding:48px 0}.hero p{font-size:16px}.section-head{display:block}.count{display:block;margin-top:12px}.resource{gap:18px;padding:18px}.resource .cover{flex-basis:96px}.resource .year{flex-basis:84px;font-size:13px;padding:14px 6px}.resource h3{font-size:21px;margin:8px 0 6px}.resource p{font-size:14px;margin-bottom:14px}.how{padding:22px;display:block}footer .foot{display:block}footer .foot span{display:block;margin-top:8px}}
+  </style>
+</head>
+<body>
+  <header class="hdr">
+    <div class="wrap hdr-in">
+      <a class="brand" href="../" aria-label="IMAD - página inicial">
+        <img src="../assets/imad-symbol.png" alt="Símbolo do IMAD">
+        <strong>IMAD</strong>
+      </a>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="../#about">Sobre</a>
+        <a href="../#impact">História</a>
+        <a href="../#reading">Publicações</a>
+        <a href="./" aria-current="page" style="color:var(--green)">Projetos</a>
+        <a href="../#contact">Contato</a>
+      </nav>
+      <a class="back" href="../">← Voltar ao site</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="crumb"><a href="../">Início</a> / Projetos Realizados</div>
+      <span class="kicker">Trajetória IMAD · desde 2002</span>
+      <h1>Projetos Realizados</h1>
+      <p>Programas, projetos e iniciativas que o IMAD desenvolveu com comunidades, governos, universidades e parceiros em Dourados e na região da Grande Dourados.</p>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Mais de 20 anos de atuação</span>
+        <h2>Principais projetos e iniciativas</h2>
+        <p>Uma seleção do trabalho do Instituto, do mais recente ao mais antigo. Para o panorama completo, baixe o <a href="../arquivos/imad-dossie.pdf" download="IMAD-Dossie.pdf" style="color:var(--green);font-weight:900;text-decoration:underline">dossiê do IMAD</a>.</p>
+      </div>
+      <span class="count" id="resource-count">14 projetos</span>
+    </div>
+
+    <div class="tools">
+      <input class="search" id="search" type="search" placeholder="Buscar por projeto, tema ou parceiro..." aria-label="Buscar projetos">
+    </div>
+    <div class="resource-grid" id="resource-grid">
+      <article class="resource">
+        <div class="year" aria-label="Período">2020–2022</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Projeto Arajuasa – Aldeia Bororó</h3>
+          <p>“Bênção ao lado do Céu”: hortas orgânicas, artesanato local, recuperação ambiental, implantação de Sistema Agroflorestal (SAF), capacitação em gestão de projetos socioambientais e construção de um Centro de Desenvolvimento Local.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Aldeia Bororó, Dourados</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2020–2021</div>
+        <div class="body">
+          <span class="type">Planejamento urbano</span>
+          <h3>Revisão do Plano Diretor de Dourados</h3>
+          <p>Representação no Núcleo Gestor Participativo (NGP) e na Equipe Técnica Municipal. O IMAD fez a ponte com as comunidades indígenas e suas lideranças para que participassem da definição de demandas e desafios.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Prefeitura Municipal de Dourados</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2017–2018</div>
+        <div class="body">
+          <span class="type">Políticas públicas</span>
+          <h3>Programa Cidades Sustentáveis em Dourados</h3>
+          <p>Por meio de reuniões públicas na Câmara Municipal, o IMAD trouxe o PCS para Dourados: agenda de sustentabilidade urbana em 12 eixos, indicadores ligados aos ODS da ONU e banco de boas práticas para orientar o Plano de Metas.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Câmara Municipal de Dourados · PCS</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2014–2015</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Diagnóstico Socioambiental de Quatro Terras Indígenas Kaiowa</h3>
+          <p>Estudo em Laguna Caarapã, Antônio João e Ponta Porã. Resultou em uma carteira de projetos orçados para cada aldeia em 7 áreas: produção de alimentos, comercialização, cultura, recuperação de nascentes e matas ciliares, corredores ecológicos e artesanato.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Ministério Público do Trabalho (TAC)</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2010–2013</div>
+        <div class="body">
+          <span class="type">Recursos hídricos</span>
+          <h3>Programa AMBI – Águas e Matas da Bacia do Ivinhema</h3>
+          <p>28 seminários municipais e 1 regional em 7 municípios, 2 corredores ecológicos estabelecidos, Atlas didático de 12 municípios, livro-apostila de educação ambiental para professores e 4 livretos com recomendações para cada município.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Petrobras Ambiental</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2008–2009</div>
+        <div class="body">
+          <span class="type">Políticas públicas</span>
+          <h3>Lei municipal contra a queima da cana-de-açúcar</h3>
+          <p>Em audiências públicas, o IMAD trouxe especialistas para apoiar a proibição da queima da cana antes da colheita. A lei foi aprovada em 2009 e Dourados foi o único município do MS a instituí-la.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Câmara Municipal de Dourados</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2008</div>
+        <div class="body">
+          <span class="type">Conservação</span>
+          <h3>Plano de Manejo do Parque Natural Municipal do Paragem</h3>
+          <p>Primeira fase do plano de manejo da primeira unidade de conservação do município de Dourados.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Prefeitura Municipal de Dourados</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2008</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Roças familiares (kokue) no Panambizinho</h3>
+          <p>Apoio à formação de roças para as 86 famílias da Terra Indígena Panambizinho. Cada família definiu a área, os cultivos e o manejo do solo, e recebeu um kit de ferramentas.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Fundação Banco do Brasil</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2007</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Seminário sobre a expansão da cana-de-açúcar</h3>
+          <p>Dois dias de seminário com mais de 300 participantes – universidades, Embrapa, setor sucroenergético e 7 comunidades indígenas impactadas – que produziram um Manifesto de Intenções, depois levado à Assembleia Legislativa.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> UFMS · UEMS · Embrapa</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2006–2007</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Cadastramento de famílias indígenas de Dourados</h3>
+          <p>Cadastro das famílias nucleares e mapeamento das famílias extensas Kaiowa-Ñandéva, garantindo acesso respeitoso e diferenciado ao Cadastro Único e ao Bolsa Família, com mapa das aldeias e diagramas de parentesco.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Ministério do Desenvolvimento Social</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2004–2008</div>
+        <div class="body">
+          <span class="type">Desenvolvimento territorial</span>
+          <h3>Território da Grande Dourados e ADT/GD</h3>
+          <p>Estruturação do primeiro Território da Cidadania da região e fundação da Agência de Desenvolvimento Territorial da Grande Dourados, reunindo 12 municípios em torno da agricultura familiar e das comunidades tradicionais.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Ministério do Desenvolvimento Agrário</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">2000–2004</div>
+        <div class="body">
+          <span class="type">Planejamento regional</span>
+          <h3>Avaliação Ambiental Estratégica para o Gás Natural</h3>
+          <p>Integrantes do IMAD participaram da AAE/GN, que definiu o traçado mais adequado para o Gasoduto da Unificação e avaliou seus impactos socioculturais, econômicos e ambientais. O estudo virou livro, publicado pela Editora UEMS.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Petrobras Gás · Rede Brasil-Gás</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">—</div>
+        <div class="body">
+          <span class="type">Comunidades indígenas</span>
+          <h3>Qualificação em Trabalhos Manuais e Artesanato</h3>
+          <p>Capacitação de 80 mulheres indígenas em situação de vulnerabilidade. O projeto fundou uma associação de mulheres, que recebeu máquinas de costura e passou a produzir redes, bijuterias, roupas e cestas.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Carteira Indígena · MMA</span></div>
+        </div>
+      </article>
+      <article class="resource">
+        <div class="year" aria-label="Período">—</div>
+        <div class="body">
+          <span class="type">Recuperação ambiental</span>
+          <h3>Recuperação da Pedreira São Gerônimo</h3>
+          <p>Plano de Recuperação de Área Degradada com replantio de matas nativas e recuperação da mata ciliar do Córrego Bororó, em Dourados.</p>
+          <div class="actions"><span class="partner"><b>Parceria / financiamento:</b> Técnica Viária</span></div>
+        </div>
+      </article>
+    </div>
+
+    <section class="empty" id="empty-state" hidden>
+      <div class="empty-icon" aria-hidden="true">
+        <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h9l5 5V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><path d="M14 3.5V9h5M8 13h8M8 17h6"/></svg>
+      </div>
+      <h3>Nenhum projeto encontrado</h3>
+      <p>Tente buscar por outro projeto, tema ou parceiro.</p>
+    </section>
+
+    <div class="how">
+      <div aria-hidden="true" style="font-size:25px">↗</div>
+      <div>
+        <strong>Quer realizar um projeto com o IMAD?</strong>
+        <p>O IMAD é uma OSCIP e desenvolve planos de manejo, recuperação de áreas degradadas, licenciamento, RPPN e reserva legal, gestão agroecológica e educação ambiental. <a href="../#contact" style="color:var(--green);font-weight:900;text-decoration:underline">Fale com a gente</a>.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <strong>IMAD</strong>
+      <span>Instituto de Meio Ambiente e Desenvolvimento · Dourados, MS</span>
+      <a href="../">Voltar ao site principal</a>
+    </div>
+  </footer>
+
+  <script>
+    // Filtra os cartões pelo título ou assunto.
+    const search = document.getElementById('search');
+    search.addEventListener('input', () => {
+      const cards = [...document.querySelectorAll('#resource-grid .resource')];
+      const term = search.value.trim().toLocaleLowerCase('pt-BR');
+      let visible = 0;
+      cards.forEach(card => {
+        const match = card.textContent.toLocaleLowerCase('pt-BR').includes(term);
+        card.hidden = !match;
+        if (match) visible++;
+      });
+      document.getElementById('empty-state').hidden = visible > 0;
+      document.getElementById('resource-count').textContent = visible + (visible === 1 ? ' projeto' : ' projetos');
+    });
+  </script>
+</body>
+</html>
