@@ -295,7 +295,7 @@
     .gal .t1,.gal .t2,.gal .t3,.gal .t4,.gal .t5,.gal .t6{grid-column:span 1; grid-row:span 1; min-height:240px}
     .gal .t1{grid-column:span 2; min-height:320px}
   }
-  @media (max-width:1024px){
+  @media (max-width:1180px){
     .nav, .hdr .lang.desk{display:none}
     .ham{display:flex}
   }
@@ -349,6 +349,7 @@
         <a href="#impact">{{ t.nav.impact }}</a>
         <a href="#images">{{ t.nav.images }}</a>
         <a href="#reading">{{ t.nav.reading }}</a>
+        <a href="projetos/">{{ t.nav.projects }}</a>
         <a href="#ecolinks">{{ t.nav.ecolinks }}</a>
         <a href="#contact">{{ t.nav.contact }}</a>
       </nav>
@@ -375,6 +376,7 @@
       <a class="slink" href="#impact" onClick="{{ closeMenu }}">{{ t.nav.impact }}</a>
       <a class="slink" href="#images" onClick="{{ closeMenu }}">{{ t.nav.images }}</a>
       <a class="slink" href="#reading" onClick="{{ closeMenu }}">{{ t.nav.reading }}</a>
+      <a class="slink" href="projetos/" onClick="{{ closeMenu }}">{{ t.nav.projects }}</a>
       <a class="slink" href="#ecolinks" onClick="{{ closeMenu }}">{{ t.nav.ecolinks }}</a>
       <a class="slink" href="#contact" onClick="{{ closeMenu }}">{{ t.nav.contact }}</a>
       <a class="btn btn-green btn-lg" style="margin-top:14px" href="#contact" onClick="{{ closeMenu }}">{{ t.ctaVolunteer }}</a>
@@ -562,7 +564,7 @@
         <p class="lead">{{ t.readLead }}</p>
       </div>
       <div class="read-grid">
-        <a class="read rv" href="cartilhas/arquivos/imad-dossie.pdf" download="IMAD-Dossie.pdf">
+        <a class="read rv" href="arquivos/imad-dossie.pdf" download="IMAD-Dossie.pdf">
           <div class="rico"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a0 0 0 0 1 0 0H4z"/><path d="M14 4v5h5M8 13h8M8 17h6"/></svg></div>
           <span class="tag">{{ t.read1tag }}</span><h3>{{ t.read1t }}</h3><p>{{ t.read1d }}</p>
           <span class="more">{{ t.readDownload }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 10l6 6 6-6M5 20h14"/></svg></span>
@@ -661,6 +663,7 @@
           <a href="#impact">{{ t.nav.impact }}</a>
           <a href="#images">{{ t.nav.images }}</a>
           <a href="#reading">{{ t.nav.reading }}</a>
+          <a href="projetos/">{{ t.nav.projects }}</a>
         </div>
         <div class="foot-col">
           <h4>{{ t.footGet }}</h4>
@@ -686,7 +689,7 @@
 const TR = {
   pt: {
     brandSub: "Instituto de Meio Ambiente e Desenvolvimento",
-    nav: { home:"Início", about:"Sobre", impact:"História", images:"Imagens", videos:"Vídeos", reading:"Publicações", ecolinks:"Ecolinks", donate:"Doar", contact:"Contato" },
+    nav: { home:"Início", about:"Sobre", impact:"História", images:"Imagens", videos:"Vídeos", reading:"Publicações", projects:"Projetos Realizados", ecolinks:"Ecolinks", donate:"Doar", contact:"Contato" },
     heroKicker: "ONG · OSCIP · desde 2002",
     heroTitle: "Equilíbrio entre as pessoas e a natureza",
     heroLead: "Há mais de 20 anos promovemos o ecodesenvolvimento no Mato Grosso do Sul — unindo equidade social, viabilidade econômica e integridade ambiental.",
@@ -747,7 +750,7 @@ const TR = {
   },
   en: {
     brandSub: "Institute for Environment and Development",
-    nav: { home:"Home", about:"About", impact:"Story", images:"Images", videos:"Videos", reading:"Reading", ecolinks:"Ecolinks", donate:"Donate", contact:"Contact" },
+    nav: { home:"Home", about:"About", impact:"Story", images:"Images", videos:"Videos", reading:"Reading", projects:"Completed Projects", ecolinks:"Ecolinks", donate:"Donate", contact:"Contact" },
     heroKicker: "NGO · OSCIP · since 2002",
     heroTitle: "Balance between people and nature.",
     heroLead: "For over 20 years we've advanced ecodevelopment in Mato Grosso do Sul, Brazil — uniting social equity, economic viability and environmental integrity.",
